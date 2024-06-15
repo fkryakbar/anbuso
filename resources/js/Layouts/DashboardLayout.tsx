@@ -63,7 +63,7 @@ export default function Authenticated({ children }: PropsWithChildren) {
                     </div>
                 </nav>
                 <div className='flex'>
-                    <aside className={`bg-white min-h-screen shadow-md absolute top-0 ${isSideBarOpen ? 'left-0' : 'left-[-250px]'} w-[250px] pt-5 transition-all lg:hidden`}>
+                    <aside className={`bg-white min-h-screen shadow-md absolute top-0 ${isSideBarOpen ? 'left-0' : 'left-[-250px]'} w-[250px] pt-5 transition-all lg:hidden z-20`}>
                         <div className='flex ml-5 items-center justify-between mr-5'>
                             <Link href='/' className='text-purple-400 text-3xl font-bold'>
                                 AnBuSo
@@ -95,7 +95,8 @@ export default function Authenticated({ children }: PropsWithChildren) {
                         </div>
                         <SideMenu pageData={pageData} />
                     </aside>
-                    <div className='basis-[85%]'>
+                    <div onClick={e => setIsSideBarOpen(false)} className={`fixed inset-0 z-10 items-end bg-black bg-opacity-50 sm:items-center sm:justify-center ${isSideBarOpen ? 'flex' : 'hidden'}`}></div>
+                    <div className='lg:basis-[85%] w-full'>
                         <main className='p-5'>{children}</main>
                     </div>
                 </div>

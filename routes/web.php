@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AnalisisController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PaketSoalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Foundation\Application;
@@ -17,12 +19,15 @@ Route::get('register', [RegisterController::class, 'index'])->name('register');
 Route::post('register', [RegisterController::class, 'store']);
 
 Route::get('login', [LoginController::class, 'index'])->name('login');
-
 Route::post('login', [LoginController::class, 'login']);
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function () {
+    Route::get('/paket-soal', [PaketSoalController::class, 'index'])->name('paket-soal');
+    Route::get('/analisis', [AnalisisController::class, 'index'])->name('analisis');
+});
+
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

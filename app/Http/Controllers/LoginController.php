@@ -19,16 +19,32 @@ class LoginController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email', 'max:255'],
             'password' => ['required', 'max:28'],
+        ], [
+            "email.required" => 'Email wajib diisi',
+            "email.email" => 'Email harus email yang valid',
+            "password.required" => 'Password wajib diisi',
+            "password.max" => 'Maksimal panjang password 28 karakter',
         ]);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('dashboard');
+            return redirect()->intended(route('paket-soal'));
         }
 
         return back()->withErrors([
             'email' => 'Akun tidak terdaftar atau email dan password salah',
         ])->onlyInput('email');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }

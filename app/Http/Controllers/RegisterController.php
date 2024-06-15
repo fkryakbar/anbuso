@@ -24,6 +24,7 @@ class RegisterController extends Controller
             "name.required" => 'Nama wajib diisi',
             "name.string" => 'Nama nama harus berupa huruf',
             "email.required" => 'Email wajib diisi',
+            "email.email" => 'Email harus email yang valid',
             "email.lowercase" => 'Email harus huruf kecil',
             "email.unique" => 'Email sudah terdaftar',
             "password.required" => 'Password wajib diisi',

@@ -5,10 +5,12 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Gradent from '@/Components/Gradient';
+import { router } from '@inertiajs/react'
 
 export default function Login({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
+    const props = usePage().props.auth as any;
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -16,6 +18,10 @@ export default function Login({ status, canResetPassword }: { status?: string, c
     });
 
     useEffect(() => {
+        if (props.user) {
+            router.get(route('paket-soal'))
+        }
+
         return () => {
             reset('password');
         };
@@ -43,14 +49,6 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                     </div>
                     <div className='basis-[50%] flex flex-col justify-center'>
                         <h1 className='text-2xl font-bold text-purple-400 mb-5'>Masuk</h1>
-                        {/* {
-                        props.flash.success && (
-                            <div role="alert" className="alert alert-success mb-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>{props.flash.success}</span>
-                            </div>
-                        )
-                    } */}
                         <form onSubmit={submit} autoComplete='off'>
 
                             <div className="mt-4">

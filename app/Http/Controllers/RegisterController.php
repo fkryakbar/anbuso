@@ -46,6 +46,6 @@ class RegisterController extends Controller
 
 
         event(new Registered($user));
-        return redirect('/register')->back('success', 'Akun berhasil terdaftar');;
+        return back()->with('success', 'Akun berhasil terdaftar');
     }
 }

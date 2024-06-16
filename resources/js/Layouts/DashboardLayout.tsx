@@ -8,19 +8,18 @@ import { usePage } from '@inertiajs/react';
 import { User } from '@/types';
 import SideMenu from '@/Components/SideMenu';
 function getInitials(fullName: string) {
-    // Split the full name into separate words
     const words = fullName.split(' ');
 
     const initials = words.reduce((acc, word) => acc + word[0] + '', '');
 
     return initials.slice(0, 2);
 }
+
+
 export default function Authenticated({ children }: PropsWithChildren) {
     const pageData = usePage();
     const { user } = pageData.props.auth as { user: User };
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-
-    // console.log(route());
 
     return (
         <>
@@ -63,7 +62,7 @@ export default function Authenticated({ children }: PropsWithChildren) {
                     </div>
                 </nav>
                 <div className='flex'>
-                    <aside className={`bg-white min-h-screen shadow-md absolute top-0 ${isSideBarOpen ? 'left-0' : 'left-[-250px]'} w-[250px] pt-5 transition-all lg:hidden z-20`}>
+                    <aside className={`bg-white min-h-screen shadow-md fixed top-0 ${isSideBarOpen ? 'left-0' : 'left-[-250px]'} w-[250px] pt-5 transition-all lg:hidden z-20`}>
                         <div className='flex ml-5 items-center justify-between mr-5'>
                             <Link href='/' className='text-purple-400 text-3xl font-bold'>
                                 AnBuSo
@@ -95,7 +94,7 @@ export default function Authenticated({ children }: PropsWithChildren) {
                         </div>
                         <SideMenu pageData={pageData} />
                     </aside>
-                    <div onClick={e => setIsSideBarOpen(false)} className={`fixed inset-0 z-10 items-end bg-black bg-opacity-50 sm:items-center sm:justify-center ${isSideBarOpen ? 'flex' : 'hidden'}`}></div>
+                    <div onClick={e => setIsSideBarOpen(false)} className={`fixed inset-0 z-10 items-end bg-black bg-opacity-50 sm:items-center sm:justify-center ${isSideBarOpen ? 'flex' : 'hidden'} min-h-screen`}></div>
                     <div className='lg:basis-[85%] w-full'>
                         <main className='p-5'>{children}</main>
                     </div>

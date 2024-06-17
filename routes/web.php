@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function
     Route::get('/paket-soal', [PaketSoalController::class, 'index'])->name('paket-soal');
     Route::post('/paket-soal', [PaketSoalController::class, 'create'])->name('post-paket-soal');
     Route::get('/paket-soal/{slug}', [SoalController::class, 'index'])->name('soal');
+    Route::post('/paket-soal/{slug}', [PaketSoalController::class, 'update'])->name('update-paket-soal');
     Route::get('/paket-soal/{slug}/delete', [PaketSoalController::class, 'delete']);
 
 

@@ -4,14 +4,8 @@ import CreateForm from "./Partials/CreateForm";
 import { PaketSoal } from "@/types";
 import Swal from 'sweetalert2'
 import { useEffect } from "react";
+import { timeFormat } from "@/helper/helper";
 
-const timeFormat = function (timeString: string) {
-    var d = new Date(timeString);
-    return `${d.toLocaleTimeString('id-ID', {
-        weekday: "long", year: "numeric", month: "short",
-        day: "numeric", hour: "2-digit", minute: "2-digit"
-    })}`
-}
 
 export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
     const props = usePage().props as any;
@@ -28,15 +22,34 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
             confirmButtonText: "Hapus!"
         }).then((result) => {
             if (result.isConfirmed) {
-                router.get(`/dashboard/paket-soal/${slug}/delete`)
+                router.get(`/dashboard/paket-soal/${slug}/delete`, {}, {
+                    onSuccess: () => {
+                        Swal.fire({
+                            title: "Dihapus",
+                            text: "Paket Soal berhasil dihapus",
+                            icon: "success"
+                        });
+                    }
+                })
             }
         });
     }
-
     return (
         <>
             <DashboardLayout>
                 <Head title="Paket Soal" />
+                <div className="text-sm breadcrumbs">
+                    <ul>
+                        <li>
+                            <a>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-4 h-4 mr-2 stroke-current">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                                </svg>
+                                Paket Soal
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 <div className="p-5 bg-white rounded-md shadow-sm flex items-center justify-between w-full">
                     <h1 className="text-gray-500 font-semibold text-xl">
                         Paket Soal
@@ -77,7 +90,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                                     <img src="/static/kuis.png" alt="logo" width="100%" />
                                 </div>
                                 <div className="block lg:basis-[96%] basis-[75%]">
-                                    <Link href="/dashboard/paket-soal/sysY-Guu-Jjt">
+                                    <Link href={`/dashboard/paket-soal/${e.slug}`}>
                                         <p className="lg:text-xl text-lg font-semibold text-slate-600">
                                             {e.title}
                                         </p>

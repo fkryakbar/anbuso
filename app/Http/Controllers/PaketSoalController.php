@@ -53,4 +53,18 @@ class PaketSoalController extends Controller
 
         return back()->with('success', 'Paket Soal Berhasil dihapus');
     }
+
+    public function update($slug, Request $request)
+    {
+        $request->validate([
+            'title' => 'required|max:50|string',
+            'show_correct_answer' => 'required',
+            'accept_responses' => 'required',
+        ]);
+        $paketSoal = PaketSoal::where('slug', $slug)->where('user_id', Auth::user()->id)->firstOrFail();
+
+        $paketSoal->update($request->all());
+
+        return back()->with('success', 'Paket Soal berhasil diperbarui');
+    }
 }

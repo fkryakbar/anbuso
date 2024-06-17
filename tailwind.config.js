@@ -1,21 +1,20 @@
-import forms from '@tailwindcss/forms';
+import forms from "@tailwindcss/forms";
 
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
-        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-        './storage/framework/views/*.php',
-        './resources/views/**/*.blade.php',
-        './resources/js/**/*.tsx',
+        "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
+        "./storage/framework/views/*.php",
+        "./resources/views/**/*.blade.php",
+        "./resources/js/**/*.tsx",
     ],
 
     theme: {
-        extend: {
-        },
+        extend: {},
     },
     daisyui: {
         themes: ["light", "dark"],
     },
     darkMode: "class",
-    plugins: [forms, require('daisyui'),],
+    plugins: [require("daisyui")],
 };

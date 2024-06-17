@@ -18,8 +18,8 @@ export interface PaketSoal {
     title: string;
     slug: string;
     user_id: BigInteger;
-    show_correct_answer: boolean;
-    accept_responses: boolean;
+    show_correct_answer: boolean | number;
+    accept_responses: boolean | number;
     created_at: string;
     updated_at: string;
 } 

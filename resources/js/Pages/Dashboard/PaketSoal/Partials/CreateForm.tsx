@@ -4,30 +4,24 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Link, router, useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler, useEffect } from "react";
+import Swal from "sweetalert2";
 
 export default function CreateForm() {
     const props = usePage().props as any;
-    const { data, setData, errors, post, processing, recentlySuccessful, reset } = useForm({
+    const { data, setData, errors, post, processing, wasSuccessful, reset } = useForm({
         title: ''
     })
-
-    // console.log(props);
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('post-paket-soal'))
+        post(route('post-paket-soal'), {
+            onSuccess: (data) => {
+                reset('title');
+                router.get(`/dashboard/paket-soal/${(data.props.flash as any).data.slug}`)
+            }
+        })
 
     }
-
-    useEffect(() => {
-        if (recentlySuccessful) {
-            reset('title');
-            router.get(`/dashboard/paket-soal/${props.flash.data.slug}`)
-        }
-
-    }, [recentlySuccessful])
-
-
     return <>
         <dialog id="create" className="modal">
             <div className="modal-box">
@@ -38,10 +32,10 @@ export default function CreateForm() {
                 </form>
                 <h3 className="font-bold text-lg">Buat Paket Soal</h3>
                 {
-                    props.flash.success && (
+                    wasSuccessful && (
                         <div role="alert" className="alert alert-success mb-5 mt-5">
                             <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            <span>{props.flash.success}</span>
+                            <span>Paket Soal Berhasil dibuat</span>
                         </div>
                     )
                 }

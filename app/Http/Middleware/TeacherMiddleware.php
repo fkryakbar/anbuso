@@ -21,6 +21,6 @@ class TeacherMiddleware
                 return $next($request);
             }
         }
-        abort(404);
+        return redirect(route('login'));
     }
 }

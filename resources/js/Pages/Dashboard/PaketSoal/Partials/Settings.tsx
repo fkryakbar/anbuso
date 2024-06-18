@@ -16,15 +16,9 @@ export default function Settings({ paketSoal }: { paketSoal: PaketSoal }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('update-paket-soal', { slug: paketSoal.slug }), {
-            onSuccess: (data) => {
-                // router.get(`/dashboard/paket-soal/${(data.props.flash as any).data.slug}`)
-            }
-        })
+        post(route('update-paket-soal', { slug: paketSoal.slug }))
 
     }
-    // console.log(flash);
-    console.log(recentlySuccessful);
 
     return <>
         <dialog id="settings" className="modal">

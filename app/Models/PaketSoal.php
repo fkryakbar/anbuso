@@ -11,4 +11,9 @@ class PaketSoal extends Model
     protected $table = 'paket_soal';
 
     protected $guarded = [];
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class, 'paket_soal_slug', 'slug');
+    }
 }

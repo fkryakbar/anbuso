@@ -1,10 +1,40 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { timeFormat } from "@/helper/helper";
 import { PaketSoal } from "@/types";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import Settings from "./Partials/Settings";
+import CreateSoalForm from "./Partials/CreateSoalForm";
+import Swal from "sweetalert2";
 
 export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
+    // console.log(paketSoal);
+    const deleteSoal = (slug: string) => {
+        Swal.fire({
+            title: "Apakah anda yakin?",
+            text: "Soal yang dihapus tidak akan bisa dipulihkan",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            cancelButtonText: 'Batal',
+            confirmButtonText: "Hapus!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.get(route('delete-question', {
+                    paket_soal_slug: paketSoal.slug,
+                    slug: slug
+                }), {}, {
+                    onSuccess: () => {
+                        Swal.fire({
+                            title: "Dihapus",
+                            text: "Soal berhasil dihapus",
+                            icon: "success"
+                        });
+                    }
+                })
+            }
+        });
+    }
     return (
         <DashboardLayout>
             <Head title={paketSoal.title} />
@@ -62,12 +92,21 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                             Pengaturan
                         </button>
                         <Settings paketSoal={paketSoal} />
-                        <button className="btn rounded-md btn-sm  text-white font-weight-bol bg-green-400 hover:bg-green-600">
+                        <button
+                            onClick={() => {
+                                (
+                                    document.getElementById(
+                                        "create-soal-form"
+                                    ) as HTMLDialogElement
+                                ).showModal()
+                            }}
+                            className="btn rounded-md btn-sm  text-white font-weight-bol bg-green-400 hover:bg-green-600">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                             </svg>
                             Buat
                         </button>
+                        <CreateSoalForm paketSoal={paketSoal} />
                         <button className="btn btn-sm text-slate-500">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                 <path fillRule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z" clipRule="evenodd" />
@@ -83,6 +122,110 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                         </a>
                     </div>
                 </div>
+            </div>
+            <div className="mx-auto max-w-[700px]">
+                {
+                    (paketSoal.questions && paketSoal.questions.length > 0) ? paketSoal.questions.map((q, index) => (
+                        <div key={index} className="mt-3 bg-white p-5 shadow rounded-md">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <h1 className="text-2xl font-bold text-gray-600">Soal Nomor {index + 1}</h1>
+                                    <span className="text-xs text-gray-600">{timeFormat(q.created_at)}</span>
+                                </div>
+                                <div className="dropdown dropdown-end">
+                                    <label tabIndex={0} className="btn btn-sm bg-green-400 border-none hover:bg-green-700 m-1 text-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                                        </svg>
+                                    </label>
+                                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                                        <li>
+                                            <a href="/dashboard/lessons/sysY-Guu-Jjt/1vVF-ySQ-9sH/1/edit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                                </svg>
+
+                                                Ubah Soal
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button onClick={e => { deleteSoal(q.slug) }} className="text-red-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"  >
+                                                    <path fillRule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z"
+                                                        clipRule="evenodd" />
+                                                </svg>
+                                                Hapus Soal
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="mt-5" dangerouslySetInnerHTML={{ __html: q.content }}></div>
+                            <div className="mt-3">
+                                {
+                                    q.option_a && (
+                                        <div className="flex mb-4">
+                                            <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="a" />
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'a' ? 'bg-green-400' : ''}`} htmlFor="a">
+                                                A. {q.option_a}
+                                            </label>
+                                            <br />
+                                        </div>
+                                    )
+                                }
+                                {
+                                    q.option_b && (
+                                        <div className="flex mb-4">
+                                            <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="b" />
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'b' ? 'bg-green-400' : ''}`} htmlFor="b">
+                                                B. {q.option_b}
+                                            </label>
+                                            <br />
+                                        </div>
+                                    )
+                                }
+                                {
+                                    q.option_c && (
+                                        <div className="flex mb-4">
+                                            <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="c" />
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'c' ? 'bg-green-400' : ''}`} htmlFor="c">
+                                                C. {q.option_c}
+                                            </label>
+                                            <br />
+                                        </div>
+                                    )
+                                }
+                                {
+                                    q.option_d && (
+                                        <div className="flex mb-4">
+                                            <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="d" />
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'd' ? 'bg-green-400' : ''}`} htmlFor="d">
+                                                D. {q.option_d}
+                                            </label>
+                                            <br />
+                                        </div>
+                                    )
+                                }
+                                {
+                                    q.option_e && (
+                                        <div className="flex mb-4">
+                                            <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="e" />
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'e' ? 'bg-green-400' : ''}`} htmlFor="e">
+                                                E. {q.option_e}
+                                            </label>
+                                            <br />
+                                        </div>
+                                    )
+                                }
+                            </div>
+                        </div>
+                    )) : (
+                        <div className="mt-10">
+                            <img src="/static/empty.svg" className="w-[300px] mx-auto" alt="" />
+                            <p className="text-center text-gray-500 font-semibold">Belum ada soal</p>
+                        </div>
+                    )
+                }
             </div>
 
         </DashboardLayout>

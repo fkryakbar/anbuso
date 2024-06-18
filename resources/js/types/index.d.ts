@@ -22,4 +22,22 @@ export interface PaketSoal {
     accept_responses: boolean | number;
     created_at: string;
     updated_at: string;
-} 
+    questions?: Question[];
+}
+
+export interface Question {
+    id: BigInteger,
+    slug: string,
+    user_id: BigInteger,
+    paket_soal_slug: string,
+    image_path?: string,
+    content: string,
+    option_a: string,
+    option_b: string,
+    option_c: string,
+    option_d: string,
+    option_e: string,
+    answer_key: string,
+    created_at: string,
+    updated_at: string,
+}

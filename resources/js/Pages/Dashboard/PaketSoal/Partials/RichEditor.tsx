@@ -11,7 +11,7 @@ const RichEditor = ({ setData, value, trigger }: { setData: any, value: string, 
         if (wrapper == null) return
         wrapper.innerHTML = ''
         const editor = document.createElement("div")
-        // editor.innerHTML = value
+        editor.innerHTML = value
         wrapper.append(editor)
         const q = new Quill(editor, {
             theme: 'snow', modules: {

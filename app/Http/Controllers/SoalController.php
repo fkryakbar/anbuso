@@ -48,4 +48,37 @@ class SoalController extends Controller
 
         return back();
     }
+
+
+    public function edit($paket_soal_slug, $slug)
+    {
+        $paketSoal = PaketSoal::where('slug', $paket_soal_slug)->where('user_id', Auth::user()->id)->with([
+            'questions' => function ($query) use ($slug) {
+                $query->where('slug', $slug);
+            }
+        ])->firstOrFail();
+
+
+
+        return Inertia::render('Dashboard/PaketSoal/EditSoal', compact('paketSoal'));
+    }
+
+    public function update($paket_soal_slug, $slug,  Request $request)
+    {
+        $request->validate(
+            [
+                'content' => 'required',
+                'answer_key' => 'required'
+            ],
+            [
+                'content.required' => 'Konten Soal Wajib diisi',
+                'answer_key.required' => 'Kunci jawaban wajib disi'
+            ]
+        );
+        $question = Question::where('slug', $slug)->where('paket_soal_slug', $paket_soal_slug)->where('user_id', Auth::user()->id)->firstOrFail();
+        $question->update($request->all());
+        return to_route('soal', [
+            'slug' => $paket_soal_slug
+        ]);
+    }
 }

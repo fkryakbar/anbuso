@@ -1,6 +1,7 @@
 import ExamLayout from "@/Layouts/ExamLayout";
-import { PaketSoal, Student } from "@/types";
-import { Head } from "@inertiajs/react";
+import { Answer, PaketSoal, Student } from "@/types";
+import { Head, router } from "@inertiajs/react";
+import axios from "axios";
 import { useState } from "react";
 
 export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, student: { session: Student } }) {
@@ -10,6 +11,7 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
     const [currentQuestion, setCurrentQuestion] = useState(questions?.[0]);
     const [questionIndex, setQuestionIndex] = useState(0);
 
+    console.log(questions);
 
     const nextQuestion = () => {
         setQuestionIndex(currentIndex => {
@@ -31,6 +33,37 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
         setQuestionIndex(index)
         setCurrentQuestion(questions?.[index])
     }
+
+    const saveAnswer = (userAnswer: string, key: string, question_slug: string) => {
+        const payload = {
+            u_id: student.session.u_id,
+            question_slug: question_slug,
+            answer: userAnswer,
+            result: false,
+            id: 0,
+            paket_soal_slug: paketSoal.slug,
+            created_at: '',
+            updated_at: ''
+
+        }
+        if (userAnswer == key) {
+            payload.result = true;
+        }
+
+        router.post(route('save_answer', { slug: paketSoal.slug }), payload);
+        // axios.post(route('save_answer', { slug: paketSoal.slug }), payload)
+        setCurrentQuestion({
+            ...currentQuestion,
+            answer: {
+                u_id: payload.u_id,
+                answer: payload.answer,
+                paket_soal_slug: payload.paket_soal_slug,
+                question_slug: payload.question_slug,
+                result: payload.result,
+            }
+        } as any)
+
+    }
     return (
         <ExamLayout changeQuestion={changeQuestion} paketSoal={paketSoal} nextQuestion={nextQuestion} prevQuestion={prevQuestion} questionIndex={questionIndex} questionTotal={questionTotal} student={student.session}>
             <Head title={`${paketSoal.title} | Exam Mode`} />
@@ -42,7 +75,7 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                             {
                                 currentQuestion.option_a && (
                                     <div className="flex mb-4">
-                                        <input type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-a`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="a" />
+                                        <input onChange={event => { saveAnswer('a', currentQuestion.answer_key, currentQuestion.slug); event.target.checked }} checked={currentQuestion.answer ? (currentQuestion.answer.answer == 'a' ? true : false) : false} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-a`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="a" />
                                         <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-a`}>
                                             A. {currentQuestion.option_a}
                                         </label>
@@ -53,7 +86,7 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                             {
                                 currentQuestion.option_b && (
                                     <div className="flex mb-4">
-                                        <input type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-b`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="b" />
+                                        <input onChange={event => { saveAnswer('b', currentQuestion.answer_key, currentQuestion.slug); event.target.checked }} checked={currentQuestion.answer ? (currentQuestion.answer.answer == 'b' ? true : false) : false} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-b`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="b" />
                                         <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-b`}>
                                             B. {currentQuestion.option_b}
                                         </label>
@@ -64,7 +97,7 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                             {
                                 currentQuestion.option_c && (
                                     <div className="flex mb-4">
-                                        <input type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-c`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="c" />
+                                        <input onChange={event => saveAnswer('c', currentQuestion.answer_key, currentQuestion.slug)} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-c`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="c" />
                                         <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-c`}>
                                             C. {currentQuestion.option_c}
                                         </label>
@@ -75,7 +108,7 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                             {
                                 currentQuestion.option_d && (
                                     <div className="flex mb-4">
-                                        <input type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-d`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="d" />
+                                        <input onChange={event => saveAnswer('d', currentQuestion.answer_key, currentQuestion.slug)} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-d`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="d" />
                                         <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-d`}>
                                             D. {currentQuestion.option_d}
                                         </label>
@@ -86,7 +119,7 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                             {
                                 currentQuestion.option_e && (
                                     <div className="flex mb-4">
-                                        <input type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-e`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="e" />
+                                        <input onChange={event => saveAnswer('e', currentQuestion.answer_key, currentQuestion.slug)} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-e`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="e" />
                                         <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-e`}>
                                             E. {currentQuestion.option_e}
                                         </label>

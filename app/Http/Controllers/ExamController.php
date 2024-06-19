@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Answer;
 use App\Models\PaketSoal;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -18,7 +19,12 @@ class ExamController extends Controller
 
         if (session()->has('student')) {
             // dd(session('student'));
-            $paketSoal = PaketSoal::where('slug', $slug)->with('questions')->firstOrFail();
+            $u_id = session('student')['u_id'];
+            $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
+                $query->with(['answer' => function ($query) use ($u_id) {
+                    $query->where('u_id', $u_id);
+                }]);
+            }])->firstOrFail();
 
             return Inertia::render('Exam/Exam', compact('paketSoal'));
         }
@@ -47,6 +53,29 @@ class ExamController extends Controller
 
         $student =  Student::create($request->all());
         Session::put('student', $student);
+
+        return back();
+    }
+
+    public function save_answer(Request $request, $slug)
+    {
+        $request->validate([
+            'u_id' => 'required',
+            'question_slug' => 'required',
+            'answer' => 'required|max:10',
+            'result' => 'required'
+        ]);
+        $request->mergeIfMissing([
+            'paket_soal_slug' => $slug
+        ]);
+
+        $if_answer_exist = Answer::where('u_id', $request->u_id)->where('question_slug', $request->question_slug)->where('paket_soal_slug', $slug)->first();
+        if ($if_answer_exist) {
+            $if_answer_exist->update($request->only(['answer', 'result']));
+        } else {
+            Answer::create($request->all());
+        }
+
 
         return back();
     }

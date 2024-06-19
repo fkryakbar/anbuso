@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function
 Route::get('exam/{slug}', [ExamController::class, 'index'])->name('exam');
 Route::post('exam/{slug}', [ExamController::class, 'student_register'])->name('student-register');
 
+Route::post('exam/{slug}/save-answer', [ExamController::class, 'save_answer'])->name('save_answer');
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

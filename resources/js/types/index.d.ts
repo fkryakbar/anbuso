@@ -40,6 +40,7 @@ export interface Question {
     answer_key: string,
     created_at: string,
     updated_at: string,
+    answer?: Answer
 }
 
 export interface Student {
@@ -50,4 +51,15 @@ export interface Student {
     u_id: string,
     updated_at: string,
     created_at: string
+}
+
+export interface Answer {
+    id: number,
+    u_id: string,
+    answer: string,
+    paket_soal_slug: string,
+    question_slug: string,
+    result: boolean,
+    created_at: string,
+    updated_at: string
 }

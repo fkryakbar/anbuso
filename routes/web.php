@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function
 
 
 Route::get('exam/{slug}', [ExamController::class, 'index'])->name('exam');
+Route::post('exam/{slug}', [ExamController::class, 'student_register'])->name('student-register');
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

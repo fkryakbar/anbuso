@@ -41,3 +41,13 @@ export interface Question {
     created_at: string,
     updated_at: string,
 }
+
+export interface Student {
+    grade: number,
+    id: number,
+    name: string,
+    paket_soal_slug: string,
+    u_id: string,
+    updated_at: string,
+    created_at: string
+}

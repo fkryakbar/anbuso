@@ -1,1 +1,0 @@
-import{j as t,Y as s}from"./app-B065Lfi7.js";import{A as i}from"./DashboardLayout-By0e_gIg.js";function r(){return t.jsx(t.Fragment,{children:t.jsxs(i,{children:[t.jsx(s,{title:"Analisis"}),"Analisis"]})})}export{r as default};

@@ -1,0 +1,1 @@
+import{j as t,Y as s}from"./app-CJn9PKAH.js";import{A as i}from"./DashboardLayout-BApVOKjM.js";function r(){return t.jsx(t.Fragment,{children:t.jsxs(i,{children:[t.jsx(s,{title:"Analisis"}),"Analisis"]})})}export{r as default};

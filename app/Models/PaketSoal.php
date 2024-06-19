@@ -10,7 +10,7 @@ class PaketSoal extends Model
     use HasFactory;
     protected $table = 'paket_soal';
 
-    protected $guarded = ['slug', 'user_id'];
+    protected $guarded = [];
 
     public function questions()
     {

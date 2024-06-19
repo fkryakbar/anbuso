@@ -4,7 +4,7 @@ import CreateForm from "./Partials/CreateForm";
 import { PaketSoal } from "@/types";
 import Swal from 'sweetalert2'
 import { useEffect } from "react";
-import { timeFormat } from "@/helper/helper";
+import { copyText, timeFormat } from "@/helper/helper";
 
 
 export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
@@ -100,12 +100,12 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                                             {timeFormat(e.created_at)}
                                         </p>
                                         <div className="flex gap-3">
-                                            <a href="/play/sysY-Guu-Jjt" target="_blank" className="btn lg:btn-sm btn-xs bg-purple-400 text-white hover:bg-purple-700" >
+                                            <Link href={route('exam', { slug: e.slug })} target="_blank" className="btn lg:btn-sm btn-xs bg-purple-400 text-white hover:bg-purple-700" >
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                                     <path fillRule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
                                                         clipRule="evenodd" />
                                                 </svg>
-                                            </a>
+                                            </Link>
                                             <div className="dropdown dropdown-end">
                                                 <div tabIndex={0} role="button" className="btn lg:btn-sm btn-xs bg-slate-50" >
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6" >
@@ -115,7 +115,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                                                 </div>
                                                 <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                                                     <li>
-                                                        <button>
+                                                        <button onClick={a => { copyText(route('exam', { slug: e.slug })) }}>
                                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6" >
                                                                 <path fillRule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z"
                                                                     clipRule="evenodd" />

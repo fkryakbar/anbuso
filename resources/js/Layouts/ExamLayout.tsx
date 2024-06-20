@@ -1,4 +1,4 @@
-import { PaketSoal, Student } from "@/types";
+import { PaketSoal, Question, Student } from "@/types";
 import { Link } from "@inertiajs/react";
 import { PropsWithChildren, ReactNode, useState } from "react";
 
@@ -10,10 +10,11 @@ interface ExamLayout {
     questionIndex: number,
     questionTotal?: number,
     student: Student,
-    changeQuestion: (index: number) => void
+    changeQuestion: (index: number) => void,
+    questions: Question[] | undefined
 }
 
-export default function GuestExamLayout({ children, paketSoal, nextQuestion, prevQuestion, questionIndex, questionTotal, student, changeQuestion }: ExamLayout) {
+export default function GuestExamLayout({ children, paketSoal, nextQuestion, prevQuestion, questionIndex, questionTotal, student, changeQuestion, questions }: ExamLayout) {
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
     return (
         <div className='bg-gray-100'>
@@ -57,10 +58,10 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                             </svg>
                         </button>
                     </div>
-                    <ExamSideBar student={student} paketSoal={paketSoal} questionTotal={questionTotal} changeQuestion={changeQuestion} questionIndex={questionIndex} />
+                    <ExamSideBar student={student} paketSoal={paketSoal} questionTotal={questionTotal} changeQuestion={changeQuestion} questionIndex={questionIndex} questions={questions} />
                 </aside>
                 <aside className={`lg:basis-[15%] bg-white min-h-screen shadow-md pt-5 hidden lg:block`}>
-                    <ExamSideBar student={student} paketSoal={paketSoal} questionTotal={questionTotal} changeQuestion={changeQuestion} questionIndex={questionIndex} />
+                    <ExamSideBar student={student} paketSoal={paketSoal} questionTotal={questionTotal} changeQuestion={changeQuestion} questionIndex={questionIndex} questions={questions} />
                 </aside>
                 <div onClick={e => setIsSideBarOpen(false)} className={`fixed inset-0 z-10 items-end bg-black bg-opacity-50 sm:items-center sm:justify-center ${isSideBarOpen ? 'flex' : 'hidden'} min-h-screen`}></div>
                 <div className='lg:basis-[85%] w-full relative'>
@@ -85,12 +86,12 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
     );
 }
 
-function ExamSideBar({ changeQuestion, student, paketSoal, questionTotal, questionIndex }: { student: Student, paketSoal: PaketSoal, questionTotal: number | undefined, changeQuestion: (index: number) => void, questionIndex: number }) {
+function ExamSideBar({ changeQuestion, student, paketSoal, questionTotal, questionIndex, questions }: { student: Student, paketSoal: PaketSoal, questionTotal: number | undefined, changeQuestion: (index: number) => void, questionIndex: number, questions: Question[] | undefined }) {
     const buttonIndex = [];
-    if (questionTotal) {
+    if (questionTotal && questions) {
         for (let i = 0; i < questionTotal; i++) {
             buttonIndex.push(
-                <button key={i} onClick={e => changeQuestion(i)} type="button" className={`p-2 rounded border-[1px] hover:bg-purple-500 hover:text-white font-semibold text-gray-600 transition-all ${questionIndex == i ? 'bg-purple-500 text-white' : ''}`}>
+                <button key={i} onClick={e => changeQuestion(i)} type="button" className={`p-2 rounded border-[1px] hover:bg-amber-500 hover:text-white font-semibold text-gray-600 transition-all ${questionIndex == i ? 'bg-amber-500 text-white' : ''} ${questions[i].answer ? 'bg-purple-500 text-white' : ''}`}>
                     {i + 1}
                 </button>
             );

@@ -5,7 +5,8 @@ import { Head, Link, router } from "@inertiajs/react";
 import Settings from "./Partials/Settings";
 import CreateSoalForm from "./Partials/CreateSoalForm";
 import Swal from "sweetalert2";
-
+import Latex from "react-latex-next";
+import 'katex/dist/katex.min.css';
 export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
     // console.log(paketSoal);
     const deleteSoal = (slug: string) => {
@@ -56,7 +57,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                     </li>
                 </ul>
             </div>
-            <div className="bg-white p-3 rounded-md shadow mt-3 w-full">
+            <div className="bg-white p-3 rounded-md shadow mt-3 w-full relative">
                 <div className="flex gap-3 p-3">
                     <div className="lg:basis-[4%] basis-[15%]">
                         <img src="/static/kuis.png" alt="logo" width="100%" />
@@ -159,7 +160,10 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                                     </ul>
                                 </div>
                             </div>
-                            <div className="mt-5" dangerouslySetInnerHTML={{ __html: q.content }}></div>
+                            {/* <div className="mt-5" dangerouslySetInnerHTML={{ __html: q.content }}></div> */}
+                            <div className="mt-5">
+                                <Latex>{q.content}</Latex>
+                            </div>
                             <div className="mt-3">
                                 {
                                     q.option_a && (

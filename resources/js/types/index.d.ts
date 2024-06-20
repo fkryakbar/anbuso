@@ -44,11 +44,13 @@ export interface Question {
 }
 
 export interface Student {
-    grade: number,
+    grade: string,
     id: number,
     name: string,
     paket_soal_slug: string,
     u_id: string,
+    answers?: Answer,
+    score?: number
     updated_at: string,
     created_at: string
 }

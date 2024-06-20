@@ -1,23 +1,58 @@
 import ExamLayout from "@/Layouts/ExamLayout";
-import { Answer, PaketSoal, Student } from "@/types";
-import { Head, router } from "@inertiajs/react";
+import { Answer, PaketSoal, Question, Student } from "@/types";
+import { Head, router, useRemember } from "@inertiajs/react";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Latex from "react-latex-next";
+import 'katex/dist/katex.min.css';
+import Swal from "sweetalert2";
 
 export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, student: { session: Student } }) {
-    const questions = paketSoal.questions
+    const [questions, setQuestions] = useState(paketSoal.questions);
     const questionTotal = questions?.length
 
-    const [currentQuestion, setCurrentQuestion] = useState(questions?.[0]);
-    const [questionIndex, setQuestionIndex] = useState(0);
-
-    console.log(questions);
+    // const [currentQuestion, setCurrentQuestion] = useState(questions?.[0]);
+    const [rememberedState, setRememberedState] = useRemember({
+        questionIndex: 0
+    });
+    const [questionIndex, setQuestionIndex] = useState(rememberedState.questionIndex);
+    const [answeredQuestion, setAnsweredQuestion] = useState<Answer>()
 
     const nextQuestion = () => {
         setQuestionIndex(currentIndex => {
-            if (currentIndex + 1 == questionTotal) return currentIndex
+            if (currentIndex + 1 == questionTotal) {
+
+                const notAnsweredQuestion = questions?.filter(q => q.answer == null) as Question[];
+
+                if (notAnsweredQuestion.length > 0) {
+                    Swal.fire({
+                        title: "Belum Selesai",
+                        text: "Masih ada soal yang belum terjawab.",
+                        icon: "warning"
+                    });
+
+                    return currentIndex
+                }
+                Swal.fire({
+                    title: "Yakin Sudah Selesai?",
+                    text: "Setelah selesai jawaban tidak bisa dirubah",
+                    icon: "success",
+                    showCancelButton: true,
+                    confirmButtonText: "Selesai",
+                    cancelButtonText: "Batal",
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        router.get(route('finished-exam', { slug: paketSoal.slug }))
+                    }
+                })
+
+
+                return currentIndex
+            }
             const newIndex = currentIndex + 1;
-            setCurrentQuestion(questions?.[newIndex]);
+            setRememberedState({
+                questionIndex: newIndex
+            })
             return newIndex;
         })
     }
@@ -25,112 +60,130 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
         setQuestionIndex(currentIndex => {
             if (currentIndex == 0) return currentIndex
             const newIndex = currentIndex - 1;
-            setCurrentQuestion(questions?.[newIndex]);
+            setRememberedState({
+                questionIndex: newIndex
+            })
             return newIndex;
         })
     }
     const changeQuestion = (index: number) => {
         setQuestionIndex(index)
-        setCurrentQuestion(questions?.[index])
+        setRememberedState({
+            questionIndex: index
+        })
     }
+
 
     const saveAnswer = (userAnswer: string, key: string, question_slug: string) => {
         const payload = {
-            u_id: student.session.u_id,
             question_slug: question_slug,
             answer: userAnswer,
             result: false,
-            id: 0,
-            paket_soal_slug: paketSoal.slug,
-            created_at: '',
-            updated_at: ''
-
         }
         if (userAnswer == key) {
             payload.result = true;
         }
 
-        router.post(route('save_answer', { slug: paketSoal.slug }), payload);
-        // axios.post(route('save_answer', { slug: paketSoal.slug }), payload)
-        setCurrentQuestion({
-            ...currentQuestion,
-            answer: {
-                u_id: payload.u_id,
-                answer: payload.answer,
-                paket_soal_slug: payload.paket_soal_slug,
-                question_slug: payload.question_slug,
-                result: payload.result,
-            }
-        } as any)
+        // router.post(route('save_answer', { slug: paketSoal.slug }), payload);
+        axios.post(route('save_answer', { slug: paketSoal.slug }), payload)
+            .then((res) => {
+                if (questions) {
+                    const currentQuestion = questions.find(q => q.slug == question_slug)
+                    const currentQuestionIndex = questions.findIndex(q => q.slug == question_slug)
+                    if (currentQuestion) {
+                        currentQuestion.answer = res.data.answer
+                    }
+                    const newQuestionsData = questions
+                    newQuestionsData[currentQuestionIndex] = currentQuestion as Question
 
+                    setQuestions(newQuestionsData);
+
+
+                }
+
+            })
+            .catch(err => {
+                Swal.fire({
+                    title: "ERROR",
+                    text: "Terjadi kesalahan",
+                    icon: "error"
+                });
+                console.log(err);
+
+            })
     }
     return (
-        <ExamLayout changeQuestion={changeQuestion} paketSoal={paketSoal} nextQuestion={nextQuestion} prevQuestion={prevQuestion} questionIndex={questionIndex} questionTotal={questionTotal} student={student.session}>
+        <ExamLayout changeQuestion={changeQuestion} paketSoal={paketSoal} questions={questions} nextQuestion={nextQuestion} prevQuestion={prevQuestion} questionIndex={questionIndex} questionTotal={questionTotal} student={student.session}>
             <Head title={`${paketSoal.title} | Exam Mode`} />
             {
-                currentQuestion ? (
-                    <div className="mb-[100px] max-w-[500px] mx-auto">
-                        <div className="mt-5" dangerouslySetInnerHTML={{ __html: currentQuestion?.content }}></div>
+                questions && questions.length > 0 ? (questions.map((q, index) => (
+
+                    <div key={index} className={`mb-[100px] max-w-[500px] mx-auto ${questionIndex == index ? '' : 'hidden'}`}>
+                        {/* <div className="mt-5" dangerouslySetInnerHTML={{ __html: q.content }}></div> */}
+                        <div className="mt-5">
+                            <Latex>{q.content}</Latex>
+                        </div>
                         <div className="mt-5">
                             {
-                                currentQuestion.option_a && (
+                                q.option_a ? (
                                     <div className="flex mb-4">
-                                        <input onChange={event => { saveAnswer('a', currentQuestion.answer_key, currentQuestion.slug); event.target.checked }} checked={currentQuestion.answer ? (currentQuestion.answer.answer == 'a' ? true : false) : false} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-a`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="a" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-a`}>
-                                            A. {currentQuestion.option_a}
+                                        <input onChange={event => { saveAnswer('a', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'a' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-a`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-a`}>
+                                            A. {q.option_a}
                                         </label>
                                         <br />
                                     </div>
-                                )
+                                ) : null
                             }
                             {
-                                currentQuestion.option_b && (
+                                q.option_b ? (
                                     <div className="flex mb-4">
-                                        <input onChange={event => { saveAnswer('b', currentQuestion.answer_key, currentQuestion.slug); event.target.checked }} checked={currentQuestion.answer ? (currentQuestion.answer.answer == 'b' ? true : false) : false} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-b`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="b" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-b`}>
-                                            B. {currentQuestion.option_b}
+                                        <input onChange={event => { saveAnswer('b', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'b' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-b`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-b`}>
+                                            B. {q.option_b}
                                         </label>
                                         <br />
                                     </div>
-                                )
+                                ) : null
                             }
                             {
-                                currentQuestion.option_c && (
+                                q.option_c ? (
                                     <div className="flex mb-4">
-                                        <input onChange={event => saveAnswer('c', currentQuestion.answer_key, currentQuestion.slug)} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-c`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="c" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-c`}>
-                                            C. {currentQuestion.option_c}
+                                        <input onChange={event => { saveAnswer('c', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'c' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-c`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-c`}>
+                                            C. {q.option_c}
                                         </label>
                                         <br />
                                     </div>
-                                )
+                                ) : null
                             }
                             {
-                                currentQuestion.option_d && (
+                                q.option_d ? (
                                     <div className="flex mb-4">
-                                        <input onChange={event => saveAnswer('d', currentQuestion.answer_key, currentQuestion.slug)} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-d`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="d" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-d`}>
-                                            D. {currentQuestion.option_d}
+                                        <input onChange={event => { saveAnswer('d', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'd' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-d`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-d`}>
+                                            D. {q.option_d}
                                         </label>
                                         <br />
                                     </div>
-                                )
+                                ) : null
                             }
                             {
-                                currentQuestion.option_e && (
+                                q.option_e ? (
                                     <div className="flex mb-4">
-                                        <input onChange={event => saveAnswer('e', currentQuestion.answer_key, currentQuestion.slug)} type="radio" name={currentQuestion.slug} id={`${currentQuestion.slug}-e`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="e" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${currentQuestion.slug}-e`}>
-                                            E. {currentQuestion.option_e}
+                                        <input onChange={event => { saveAnswer('e', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'e' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-e`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-e`}>
+                                            E. {q.option_e}
                                         </label>
                                         <br />
                                     </div>
-                                )
+                                ) : null
                             }
                         </div>
                     </div>
-                ) : null
+                ))) : null
             }
+
         </ExamLayout>
     )
 }

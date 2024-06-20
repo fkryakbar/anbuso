@@ -1,7 +1,7 @@
 import InputError from "@/Components/InputError";
 import GuestExamLayout from "@/Layouts/GuestExamLayout";
 import { PaketSoal } from "@/types";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
 export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
@@ -12,7 +12,6 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        console.log(data);
         post(route('student-register', { slug: paketSoal.slug }))
     }
 
@@ -27,18 +26,28 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                 <h3 className="text-1xl font-semibold text-gray-500">
                     Computer Based Test
                 </h3>
-                <form onSubmit={submit} method="post" autoComplete="off" autoCorrect="off">
-                    <div className="text-center pt-3">
-                        <input type="text" placeholder="Nama" name="name" className="input w-full  input-bordered mt-3" onChange={e => { setData('name', e.target.value) }} disabled={processing} />
-                        <InputError message={errors.name} />
+                {
+                    paketSoal.accept_responses ? (
+                        <form onSubmit={submit} method="post" autoComplete="off" autoCorrect="off">
+                            <div className="text-center pt-3">
+                                <input type="text" placeholder="Nama" name="name" className="input w-full  input-bordered mt-3" onChange={e => { setData('name', e.target.value) }} disabled={processing} />
+                                <InputError message={errors.name} />
 
-                        <input type="text" placeholder="Kelas" name="grade" className="input w-full  input-bordered mt-3" onChange={e => { setData('grade', e.target.value) }} disabled={processing} />
-                        <InputError message={errors.grade} />
-                    </div>
-                    <button type="submit" className="btn bg-purple-400 border-none hover:bg-purple-700 text-white mt-3" disabled={processing}>
-                        Mulai Kerjakan
-                    </button>
-                </form>
+                                <input type="text" placeholder="Kelas" name="grade" className="input w-full  input-bordered mt-3" onChange={e => { setData('grade', e.target.value) }} disabled={processing} />
+                                <InputError message={errors.grade} />
+                            </div>
+                            <button type="submit" className="btn bg-purple-400 border-none hover:bg-purple-700 text-white mt-3" disabled={processing}>
+                                Mulai Kerjakan
+                            </button>
+                        </form>
+                    ) : (
+                        <>
+                            <img src="/static/access-denied.svg" alt="access-denied" className="w-full mx-auto" />
+                            <p className="text-center font-semibold text-gray-600">Test Telah ditutup</p>
+                            <Link href="/" className="btn btn-sm bg-red-400 hover:bg-red-700 text-white">Keluar</Link>
+                        </>
+                    )
+                }
             </div>
         </GuestExamLayout>
     )

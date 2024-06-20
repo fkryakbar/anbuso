@@ -16,7 +16,6 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
         questionIndex: 0
     });
     const [questionIndex, setQuestionIndex] = useState(rememberedState.questionIndex);
-    const [answeredQuestion, setAnsweredQuestion] = useState<Answer>()
 
     const nextQuestion = () => {
         setQuestionIndex(currentIndex => {
@@ -103,9 +102,20 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
 
             })
             .catch(err => {
+                if (err.response.status == 403) {
+                    Swal.fire({
+                        title: "Ditutup",
+                        text: "Ujian Telah ditutup",
+                        icon: "error",
+                        confirmButtonText: "Keluar",
+                    }).then(result => {
+                        router.get(route('finished-exam', { slug: paketSoal.slug }))
+                    })
+                    return
+                }
                 Swal.fire({
                     title: "ERROR",
-                    text: "Terjadi kesalahan",
+                    text: "Something Went Wrong!",
                     icon: "error"
                 });
                 console.log(err);

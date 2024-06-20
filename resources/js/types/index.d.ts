@@ -50,7 +50,11 @@ export interface Student {
     paket_soal_slug: string,
     u_id: string,
     answers?: Answer,
-    score?: number
+    result?: {
+        score: number,
+        trueAnswers: number,
+        questionTotal: number,
+    },
     updated_at: string,
     created_at: string
 }

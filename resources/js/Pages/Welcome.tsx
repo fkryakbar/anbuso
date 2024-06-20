@@ -3,7 +3,7 @@ import { PageProps } from '@/types';
 
 
 export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<{ laravelVersion: string, phpVersion: string }>) {
-    console.log(auth);
+    // console.log(auth);
 
     return (
         <>

@@ -17,7 +17,7 @@ class ExamController extends Controller
     {
         $paketSoal = PaketSoal::where('slug', $slug)->firstOrFail();
 
-        if (session()->has('student')) {
+        if (session()->has('student') && $paketSoal->accept_responses == 1) {
             $u_id = session('student')['u_id'];
             $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
                 $query->with(['answer' => function ($query) use ($u_id) {
@@ -58,6 +58,15 @@ class ExamController extends Controller
 
     public function save_answer(Request $request, $slug)
     {
+
+        $paketSoal = PaketSoal::where('slug', $slug)->firstOrFail();
+
+        if ($paketSoal->accept_responses == 0) {
+            return response([
+                'message' => 'Ujian Telah ditutup'
+            ], 403);
+        }
+
         if ($request->session()->has('student')) {
             $request->validate([
                 'question_slug' => 'required',
@@ -85,21 +94,21 @@ class ExamController extends Controller
 
         return response([
             'message' => 'Unauthenticated'
-        ], 500);
+        ], 401);
     }
 
     public function finished($slug)
     {
+        $paketSoal = PaketSoal::where('slug', $slug)->firstOrFail();
         if (session()->has('student')) {
             $u_id = session('student')['u_id'];
             $student = Student::where('u_id', $u_id)->with('answers')->firstOrFail();
-            $student_score = $student->score();
-            $student->score = $student_score;
+            $student->result = $student->result($slug);
 
 
             session()->forget('student');
 
-            return Inertia::render('Exam/Finish', compact('student'));
+            return Inertia::render('Exam/Finish', compact('student', 'paketSoal'));
         } else {
             return redirect('/');
         }

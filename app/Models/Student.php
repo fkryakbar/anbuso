@@ -16,11 +16,11 @@ class Student extends Model
         return  $this->hasMany(Answer::class, 'u_id', 'u_id');
     }
 
-    public function score()
+    public function result($slug)
     {
         $answers = Answer::where('u_id', $this->u_id)->get();
         // dd($this->u_id);
-        $question_total = count($answers);
+        $question_total = Question::where('paket_soal_slug', $slug)->count();;
         $trueAnswers = 0;
         foreach ($answers as $key => $answer) {
             if ($answer->result == 1) {
@@ -30,6 +30,10 @@ class Student extends Model
 
         $score_total = round(($trueAnswers / $question_total) * 100, 2);
 
-        return $score_total;
+        return [
+            'score' => $score_total,
+            'trueAnswers' => $trueAnswers,
+            'questionTotal' => $question_total
+        ];
     }
 }

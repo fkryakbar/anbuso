@@ -19,7 +19,6 @@ class Student extends Model
     public function result($slug)
     {
         $answers = Answer::where('u_id', $this->u_id)->get();
-        // dd($this->u_id);
         $question_total = Question::where('paket_soal_slug', $slug)->count();;
         $trueAnswers = 0;
         foreach ($answers as $key => $answer) {
@@ -27,13 +26,15 @@ class Student extends Model
                 $trueAnswers++;
             }
         }
-
+        $progress = round(($answers->count() / $question_total) * 100, 2);
         $score_total = round(($trueAnswers / $question_total) * 100, 2);
 
         return [
             'score' => $score_total,
             'trueAnswers' => $trueAnswers,
-            'questionTotal' => $question_total
+            'questionTotal' => $question_total,
+            'progress' => $progress,
+            'answeredTotal' => $answers->count()
         ];
     }
 }

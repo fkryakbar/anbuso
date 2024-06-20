@@ -19,8 +19,6 @@ export default function EditSoal({ paketSoal }: { paketSoal: PaketSoal }) {
         answer_key: paketSoal.questions?.[0].answer_key
     });
 
-    console.log(data);
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         // console.log(data);

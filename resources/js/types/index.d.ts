@@ -23,6 +23,7 @@ export interface PaketSoal {
     created_at: string;
     updated_at: string;
     questions?: Question[];
+    students: Student[];
 }
 
 export interface Question {
@@ -54,6 +55,8 @@ export interface Student {
         score: number,
         trueAnswers: number,
         questionTotal: number,
+        progress: number,
+        answeredTotal: number,
     },
     updated_at: string,
     created_at: string

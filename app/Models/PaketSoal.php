@@ -16,4 +16,9 @@ class PaketSoal extends Model
     {
         return $this->hasMany(Question::class, 'paket_soal_slug', 'slug');
     }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'paket_soal_slug', 'slug');
+    }
 }

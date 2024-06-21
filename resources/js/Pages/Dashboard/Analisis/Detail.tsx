@@ -1,9 +1,9 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { timeFormat } from "@/helper/helper";
-import { PaketSoal } from "@/types";
+import { PaketSoal, Validity } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 
-export default function Summary({ paketSoal, validity }: { paketSoal: PaketSoal, validity: any }) {
+export default function Summary({ paketSoal, validity }: { paketSoal: PaketSoal, validity: Validity | null }) {
     console.log(validity);
 
     return (
@@ -54,7 +54,14 @@ export default function Summary({ paketSoal, validity }: { paketSoal: PaketSoal,
                 <Link role="tab" href={route('detail', { slug: paketSoal.slug })} className="tab tab-active">Analisis Butir Soal</Link>
             </div>
             <div className="flex flex-col gap-3 bg-white p-5 border-l-[1px] border-r-[1px] border-b-[1px]">
-                hello world
+                {
+                    validity ? (<></>) : (
+                        <div className="mt-5">
+                            <img src="/static/question-mark.svg" alt="" className="max-w-[300px] mx-auto" />
+                            <h2 className="text-center font-semibold text-gray-500">Minimal ada 5 siswa yang sudah selesai agar bisa dilakukan analisis</h2>
+                        </div>
+                    )
+                }
             </div>
         </DashboardLayout>
     )

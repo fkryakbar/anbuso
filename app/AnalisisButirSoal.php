@@ -9,67 +9,71 @@ trait AnalisisButirSoal
 {
     private function validitas($students)
     {
-        $hasil = [];
-        $answers = [];
-        foreach ($students as $key => $student) {
-            $trueAnswers = 0;
-            foreach ($student->answers as $key => $answer) {
-                if ($answer->result == 1) {
-                    $trueAnswers++;
+        if ($students->count() > 4) {
+            $hasil = [];
+            $answers = [];
+            foreach ($students as $key => $student) {
+                $trueAnswers = 0;
+                foreach ($student->answers as $key => $answer) {
+                    if ($answer->result == 1) {
+                        $trueAnswers++;
+                    }
                 }
-            }
-            array_push($hasil, $trueAnswers);
-            foreach ($student->answers as $key => $answer) {
-                array_push($answers, $answer);
+                array_push($hasil, $trueAnswers);
+                foreach ($student->answers as $key => $answer) {
+                    array_push($answers, $answer);
+                }
+
+                // dd($student->answers);
             }
 
-            // dd($student->answers);
+            $answers = collect($answers)->groupBy('question_slug');
+
+            $container = $answers->map(function ($answer) {
+                $value = [];
+                foreach ($answer as $key => $ans) {
+                    array_push($value, $ans->result);
+                }
+                return $value;
+            });
+            $rTable = $this->r_table[$students->count() - 2];
+            // dd($rTable);
+            $container = $container->mapWithKeys(function ($result, $key) use ($hasil, $rTable) {
+                $sumTrueAnswer = collect($result)->sum();
+                // dd($sumTrueAnswer);
+                $correlation_value = null;
+                try {
+                    $correlation_value =  Stat::correlation($result, $hasil);
+                } catch (\Throwable $th) {
+                }
+
+                $validity = 'Tidak dapat dihitung';
+
+                if ($correlation_value) {
+                    if ($correlation_value > $rTable) {
+                        $validity = true;
+                    } else {
+                        $validity = false;
+                    }
+                }
+
+
+                return [$key => [
+                    'correlationValue' => $correlation_value,
+                    'validity' => $validity,
+                    'trueAnswerTotal' => $sumTrueAnswer
+                ]];
+            });
+            $result = [
+                'rTable' => $rTable,
+                'studentTotal' => $students->count(),
+                'questionTotal' => count($container),
+                'questionsValidity' => $container
+            ];
+            return $result;
         }
 
-        $answers = collect($answers)->groupBy('question_slug');
-
-        $container = $answers->map(function ($answer) {
-            $value = [];
-            foreach ($answer as $key => $ans) {
-                array_push($value, $ans->result);
-            }
-            return $value;
-        });
-        $rTable = $this->r_table[$students->count() - 2];
-        // dd($rTable);
-        $container = $container->mapWithKeys(function ($result, $key) use ($hasil, $rTable) {
-            $sumTrueAnswer = collect($result)->sum();
-            // dd($sumTrueAnswer);
-            $correlation_value = null;
-            try {
-                $correlation_value =  Stat::correlation($result, $hasil);
-            } catch (\Throwable $th) {
-            }
-
-            $validity = 'Tidak dapat dihitung';
-
-            if ($correlation_value) {
-                if ($correlation_value > $rTable) {
-                    $validity = true;
-                } else {
-                    $validity = false;
-                }
-            }
-
-
-            return [$key => [
-                'correlationValue' => $correlation_value,
-                'validity' => $validity,
-                'trueAnswerTotal' => $sumTrueAnswer
-            ]];
-        });
-        $result = [
-            'rTable' => $rTable,
-            'studentTotal' => $students->count(),
-            'questionsTotal' => count($container),
-            'questionsValidity' => $container
-        ];
-        return $result;
+        return null;
         // dd($container);
     }
 

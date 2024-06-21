@@ -50,7 +50,7 @@ export interface Student {
     name: string,
     paket_soal_slug: string,
     u_id: string,
-    answers?: Answer,
+    answers?: Answer[],
     result?: {
         score: number,
         trueAnswers: number,
@@ -68,7 +68,20 @@ export interface Answer {
     answer: string,
     paket_soal_slug: string,
     question_slug: string,
-    result: boolean,
+    result: boolean | number,
     created_at: string,
     updated_at: string
+}
+
+export interface Validity {
+    rTable: number,
+    studentTotal: number,
+    questionTotal: number,
+    questionsValidity: {
+        [key: string]: {
+            correlationValue: number | null,
+            validity: boolean | string,
+            trueAnswerTotal: number,
+        }
+    }
 }

@@ -26,7 +26,11 @@ class AnalisisController extends Controller
     public function summary($slug)
     {
         $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->firstOrFail();
-        $students = Student::where('paket_soal_slug', $slug)->get();
+        $students = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+                ->orderBy('questions.id', 'ASC')
+                ->select('answers.*');
+        }])->get();
 
         foreach ($students as $key => $student) {
             $student->result = $student->result($slug);
@@ -42,7 +46,6 @@ class AnalisisController extends Controller
         $answers = Answer::where('paket_soal_slug', $slug)->get();
 
         $students = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
-            // $query->with('question')->orderBy('answers.question.id', 'DESC');
             $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
                 ->orderBy('questions.id', 'ASC')
                 ->select('answers.*');

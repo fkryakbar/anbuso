@@ -3,7 +3,9 @@ import { timeFormat } from "@/helper/helper";
 import { PaketSoal } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 
-export default function Summary({ paketSoal }: { paketSoal: PaketSoal }) {
+export default function Summary({ paketSoal, validity }: { paketSoal: PaketSoal, validity: any }) {
+    console.log(validity);
+
     return (
         <DashboardLayout>
             <Head title="Analisis" />

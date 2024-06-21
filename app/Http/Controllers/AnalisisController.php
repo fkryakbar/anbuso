@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\AnalisisButirSoal;
+use App\Models\Answer;
 use App\Models\PaketSoal;
 use App\Models\Student;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AnalisisController extends Controller
 {
+
+    use AnalisisButirSoal;
+
     public function index()
     {
         $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->with('students')->orderBy('id', 'DESC')->get();
@@ -33,7 +39,27 @@ class AnalisisController extends Controller
     {
         $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->firstOrFail();
 
-        return Inertia::render('Dashboard/Analisis/Detail', compact('paketSoal'));
+        $answers = Answer::where('paket_soal_slug', $slug)->get();
+
+        $students = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
+            // $query->with('question')->orderBy('answers.question.id', 'DESC');
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+                ->orderBy('questions.id', 'ASC')
+                ->select('answers.*');
+        }])->get();
+        $filteredStudent = [];
+        foreach ($students as $key => $student) {
+            if ($student->answers->count() == $paketSoal->questions->count()) {
+                array_push($filteredStudent, $student);
+            }
+        }
+
+        $filteredStudent = collect($filteredStudent);
+
+        $validity = $this->validitas($filteredStudent);
+
+
+        return Inertia::render('Dashboard/Analisis/Detail', compact('paketSoal', 'validity'));
     }
 
     public function delete_student($slug, $u_id)

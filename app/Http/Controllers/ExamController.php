@@ -17,7 +17,7 @@ class ExamController extends Controller
     {
         $paketSoal = PaketSoal::where('slug', $slug)->firstOrFail();
 
-        if (session()->has('student') && $paketSoal->accept_responses == 1) {
+        if (session()->has('student') && $paketSoal->accept_responses == 1 && Student::where('u_id', session('student')['u_id'])->first()) {
             $u_id = session('student')['u_id'];
             $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
                 $query->with(['answer' => function ($query) use ($u_id) {

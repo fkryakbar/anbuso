@@ -22,7 +22,6 @@ export default function ScoreDetail({ answers, questions }: { answers: Answer[] 
                         {/* head */}
                         <thead>
                             <tr>
-                                <th className="w-[10px]"></th>
                                 <th className="text-center">Nomor Soal</th>
                                 <th className="text-center">Jawaban Siswa</th>
                                 <th className="text-center">Kunci Jawaban</th>
@@ -34,7 +33,6 @@ export default function ScoreDetail({ answers, questions }: { answers: Answer[] 
                                 questions && questions.length ? (
                                     questions.map((question, key) => (
                                         <tr key={key}>
-                                            <th>{key + 1}</th>
                                             <td className="text-center">{key + 1}</td>
                                             <td className="text-center">
                                                 {

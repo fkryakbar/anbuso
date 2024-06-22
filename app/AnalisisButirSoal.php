@@ -49,7 +49,7 @@ trait AnalisisButirSoal
                 $validity = 'Tidak dapat dihitung';
 
                 if ($correlation_value) {
-                    if ($correlation_value > $rTable) {
+                    if ($correlation_value >= $rTable) {
                         $validity = true;
                     } else {
                         $validity = false;
@@ -63,6 +63,7 @@ trait AnalisisButirSoal
                     'trueAnswerTotalByQuestion' => $sumTrueAnswer
                 ]);
             }
+            // dd($questionsValidity);
             $result = [
                 'rTable' => $rTable,
                 'studentTotal' => $students->count(),

@@ -24,7 +24,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                 <h1 className="text-gray-500 font-semibold text-xl">
                     Analisis
                 </h1>
-                <button
+                {/* <button
                     className="btn text-white hover:bg-purple-800 bg-purple-500"
                     onClick={() =>
                         (
@@ -49,7 +49,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                         />
                     </svg>
                     Buat
-                </button>
+                </button> */}
                 {/* <CreateForm /> */}
             </div>
             <div className="flex flex-col gap-3 mt-5">

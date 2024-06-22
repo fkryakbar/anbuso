@@ -25,7 +25,7 @@ class AnalisisController extends Controller
 
     public function summary($slug)
     {
-        $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->firstOrFail();
+        $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->with('questions')->firstOrFail();
         $students = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
             $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
                 ->orderBy('questions.id', 'ASC')
@@ -41,7 +41,7 @@ class AnalisisController extends Controller
 
     public function detail($slug)
     {
-        $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->firstOrFail();
+        $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->with('questions')->firstOrFail();
 
         $answers = Answer::where('paket_soal_slug', $slug)->get();
 
@@ -50,19 +50,24 @@ class AnalisisController extends Controller
                 ->orderBy('questions.id', 'ASC')
                 ->select('answers.*');
         }])->get();
-        $filteredStudent = [];
+        $filteredStudents = [];
         foreach ($students as $key => $student) {
             if ($student->answers->count() == $paketSoal->questions->count()) {
-                array_push($filteredStudent, $student);
+                array_push($filteredStudents, $student);
             }
         }
 
-        $filteredStudent = collect($filteredStudent);
+        $filteredStudents = collect($filteredStudents);
 
-        $validity = $this->validitas($filteredStudent);
+        $validity = $this->validitas($filteredStudents);
 
+        $reliabilitas = $this->reliabilitas($filteredStudents);
 
-        return Inertia::render('Dashboard/Analisis/Detail', compact('paketSoal', 'validity'));
+        $tingkatKesulitan = $this->tingkat_kesukaran($filteredStudents);
+
+        $dayaPembeda = $this->daya_pembeda($filteredStudents);
+
+        return Inertia::render('Dashboard/Analisis/Detail', compact('paketSoal', 'validity', 'filteredStudents', 'reliabilitas', 'tingkatKesulitan', 'dayaPembeda'));
     }
 
     public function delete_student($slug, $u_id)

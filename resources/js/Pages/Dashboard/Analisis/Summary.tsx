@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import ScoreDetail from "./Partials/ScoreDetail";
 
 export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal, students: Student[] }) {
+
     const [scoreDetailData, setScoreDetailData] = useState<Answer[] | null>(null);
     const reload = () => {
         router.reload({
@@ -61,7 +62,7 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
     return (
         <DashboardLayout>
             <Head title="Analisis" />
-            <ScoreDetail answers={scoreDetailData} />
+            <ScoreDetail answers={scoreDetailData} questions={paketSoal.questions} />
             <div className="text-sm breadcrumbs">
                 <ul>
                     <li>

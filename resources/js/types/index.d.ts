@@ -58,6 +58,7 @@ export interface Student {
         progress: number,
         answeredTotal: number,
     },
+    trueAnswer?: number,
     updated_at: string,
     created_at: string
 }
@@ -77,11 +78,34 @@ export interface Validity {
     rTable: number,
     studentTotal: number,
     questionTotal: number,
+    trueAnswerTotalByStudent: number[],
     questionsValidity: {
-        [key: string]: {
-            correlationValue: number | null,
-            validity: boolean | string,
-            trueAnswerTotal: number,
-        }
-    }
+        questionSlug: string,
+        correlationValue: number | null,
+        validity: boolean | string,
+        trueAnswerTotalByQuestion: number,
+    }[]
+}
+
+export interface Reliability {
+    rTable: number,
+    rHitung: number,
+    reliabilitas: boolean
+}
+
+export interface TingkatKesulitan {
+    value: number,
+    category: string,
+    question_slug: string
+}
+
+export interface DayaPembeda {
+    dayaPembeda: {
+        question_slug: string,
+        value: number,
+        category: string,
+    }[],
+    lowerGroupStudents: Student[],
+    middleGroupStudents?: Student[],
+    upperGroupStudents: Student[],
 }

@@ -23,8 +23,6 @@ trait AnalisisButirSoal
                 foreach ($student->answers as $key => $answer) {
                     array_push($answers, $answer);
                 }
-
-                // dd($student->answers);
             }
 
             $answers = collect($answers)->groupBy('question_slug');
@@ -37,13 +35,14 @@ trait AnalisisButirSoal
                 return $value;
             });
             $rTable = $this->r_table[$students->count() - 2];
-            // dd($rTable);
-            $container = $container->mapWithKeys(function ($result, $key) use ($hasil, $rTable) {
-                $sumTrueAnswer = collect($result)->sum();
-                // dd($sumTrueAnswer);
+
+            $questionsValidity = [];
+
+            foreach ($container as $key => $cons) {
+                $sumTrueAnswer = collect($cons)->sum();
                 $correlation_value = null;
                 try {
-                    $correlation_value =  Stat::correlation($result, $hasil);
+                    $correlation_value =  Stat::correlation($cons, $hasil);
                 } catch (\Throwable $th) {
                 }
 
@@ -57,43 +56,245 @@ trait AnalisisButirSoal
                     }
                 }
 
-
-                return [$key => [
+                array_push($questionsValidity, [
+                    'questionSlug' => $key,
                     'correlationValue' => $correlation_value,
                     'validity' => $validity,
-                    'trueAnswerTotal' => $sumTrueAnswer
-                ]];
-            });
+                    'trueAnswerTotalByQuestion' => $sumTrueAnswer
+                ]);
+            }
             $result = [
                 'rTable' => $rTable,
                 'studentTotal' => $students->count(),
                 'questionTotal' => count($container),
-                'questionsValidity' => $container
+                'questionsValidity' => $questionsValidity,
+                'trueAnswerTotalByStudent' => $hasil
             ];
             return $result;
         }
 
         return null;
-        // dd($container);
     }
 
 
 
-    private function realibilitas()
+    private function reliabilitas($students)
     {
+        if ($students->count() > 4) {
+            $hasil = [];
+            $answers = [];
+            foreach ($students as $key => $student) {
+                $trueAnswers = 0;
+                foreach ($student->answers as $key => $answer) {
+                    if ($answer->result == 1) {
+                        $trueAnswers++;
+                    }
+                }
+                array_push($hasil, $trueAnswers);
+                foreach ($student->answers as $key => $answer) {
+                    array_push($answers, $answer);
+                }
+            }
+
+            $answers = collect($answers)->groupBy('question_slug');
+
+            $container = $answers->map(function ($answer) {
+                $value = [];
+                foreach ($answer as $key => $ans) {
+                    array_push($value, $ans->result);
+                }
+                return $value;
+            });
+            $n = $answers->count();
+            $n_1 = $n - 1;
+            $rTable = $this->r_table[$students->count() - 2];
+            $pvars = collect([]);
+            foreach ($container as $key => $cons) {
+                $pvar = Stat::pvariance($cons);
+                $pvars->push($pvar);
+            }
+            $pvarsSum = $pvars->sum();
+            $pvarsHasil = Stat::pvariance($hasil);
+            $rHitung = ($n / $n_1) * (1 - ($pvarsSum / $pvarsHasil));
+
+            $reliabilitas = false;
+
+            if ($rHitung > $rTable) {
+                $reliabilitas = true;
+            }
+
+            return [
+                'reliabilitas' => $reliabilitas,
+                'rHitung' => $rHitung,
+                'rTable' => $rTable
+            ];
+        }
+        return null;
     }
 
-
-
-    private function daya_pembenda()
+    private function tingkat_kesukaran($students)
     {
+        if ($students->count() > 4) {
+            $hasil = [];
+            $answers = [];
+            foreach ($students as $key => $student) {
+                $trueAnswers = 0;
+                foreach ($student->answers as $key => $answer) {
+                    if ($answer->result == 1) {
+                        $trueAnswers++;
+                    }
+                }
+                array_push($hasil, $trueAnswers);
+                foreach ($student->answers as $key => $answer) {
+                    array_push($answers, $answer);
+                }
+            }
+            $answers = collect($answers)->groupBy('question_slug');
+
+            $container = $answers->map(function ($answer) {
+                $value = [];
+                foreach ($answer as $key => $ans) {
+                    array_push($value, $ans->result);
+                }
+                return $value;
+            });
+
+            $trueAnswerTotalByQuestion = $container->map(function ($cons) {
+                return collect($cons)->sum();
+            });
+
+            $studentTotal = $students->count();
+            $tingkat_kesukaran = [];
+
+
+            foreach ($trueAnswerTotalByQuestion as $key => $total) {
+                $tingkatValue = $total / $studentTotal;
+
+                $tingkat = 'Sangat Mudah';
+
+                if ($tingkatValue < 0.20) {
+                    $tingkat = 'Sangat Sulit';
+                } else if ($tingkatValue < 0.40) {
+                    $tingkat = 'Sulit';
+                } else if ($tingkatValue < 0.60) {
+                    $tingkat = 'Sedang';
+                } else if ($tingkatValue < 0.90) {
+                    $tingkat = 'Mudah';
+                }
+
+
+                array_push($tingkat_kesukaran, [
+                    'question_slug' => $key,
+                    'value' => $tingkatValue,
+                    'category' => $tingkat
+                ]);
+            }
+
+            return $tingkat_kesukaran;
+        }
+        return null;
     }
 
-
-
-    private function tingkat_kesukaran()
+    private function daya_pembeda($students)
     {
+        if ($students->count() > 4 && $students->count() <= 30) {
+            $students = $students->map(function ($student) {
+                $true = $student->answers->sum('result');
+                $student = $student->setAttribute('trueAnswer', $true);
+                return $student;
+            });
+            $students = $students->sortByDesc('trueAnswer');
+            $groupNumber = floor($students->count() / 2);
+
+
+            $upperGroup = $students->take($groupNumber);
+            $lowerGroup = $students->take(-1 * $groupNumber);
+            $middleGroup = null;
+            if ($students->count() % 2 != 0) {
+                // $middleGroup = $students->splice(round($students->count() / 2) - 1, 1)->first();
+                $middleGroup = $students->diffAssoc($upperGroup);
+                $middleGroup = $middleGroup->diffAssoc($lowerGroup);
+            }
+            // dd($middleGroup);
+
+            $upperGroupAnswers = [];
+            $lowerGroupAnswers = [];
+
+            foreach ($upperGroup as $key => $student) {
+                foreach ($student->answers as $key => $answer) {
+                    array_push($upperGroupAnswers, $answer);
+                }
+            }
+            foreach ($lowerGroup as $key => $student) {
+                foreach ($student->answers as $key => $answer) {
+                    array_push($lowerGroupAnswers, $answer);
+                }
+            }
+            $upperGroupAnswers = collect($upperGroupAnswers)->groupBy('question_slug');
+            $lowerGroupAnswers = collect($lowerGroupAnswers)->groupBy('question_slug');
+
+            $upperGroupAnswersAverage = [];
+            $lowerGroupAnswersAverage = [];
+
+            foreach ($upperGroupAnswers as $key => $answer) {
+                $upperGroupAnswersAverage[$key] =  $answer->avg('result');
+            }
+            foreach ($lowerGroupAnswers as $key => $answer) {
+                $lowerGroupAnswersAverage[$key] =  $answer->avg('result');
+            }
+            $dayaPembeda = [];
+            foreach ($upperGroupAnswersAverage as $key => $upperAverage) {
+                $lowerAverage = $lowerGroupAnswersAverage[$key];
+                $value =  ($upperAverage - $lowerAverage) / 1;
+                $dayaPembeda[$key] = $value;
+            }
+            $upperGroupArray = [];
+            $lowerGroupArray = [];
+            $middleGroupArray = [];
+
+            foreach ($upperGroup as $key => $upper) {
+                array_push($upperGroupArray, $upper);
+            }
+            foreach ($lowerGroup as $key => $lower) {
+                array_push($lowerGroupArray, $lower);
+            }
+
+            if ($middleGroup) {
+                foreach ($middleGroup as $key => $middle) {
+                    array_push($middleGroupArray, $middle);
+                }
+            }
+
+            $dayaPembedaData = [
+                'upperGroupStudents' => $upperGroupArray,
+                'lowerGroupStudents' => $lowerGroupArray,
+                'middleGroupStudents' => $middleGroupArray
+            ];
+            $dayaPembedaByQuestions = [];
+            foreach ($dayaPembeda as $key => $value) {
+                $category = 'Sangat Baik';
+                if ($value <= 0.19) {
+                    $category = 'Kurang Baik';
+                } else if ($value <= 0.29) {
+                    $category = 'Cukup, Perlu Perbaikan';
+                } else if ($value <= 0.39) {
+                    $category = 'Baik';
+                }
+
+                array_push($dayaPembedaByQuestions, [
+                    'question_slug' => $key,
+                    'value' => $value,
+                    'category' => $category,
+                ]);
+            }
+            $dayaPembedaData['dayaPembeda'] = $dayaPembedaByQuestions;
+            return $dayaPembedaData;
+        }
+        return null;
     }
+
+
+
 
     private function analyze()
     {

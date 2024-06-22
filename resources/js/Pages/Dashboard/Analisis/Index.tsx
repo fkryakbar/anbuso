@@ -4,7 +4,6 @@ import { PaketSoal } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 
 export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
-    console.log(paketSoal);
 
     return <>
         <DashboardLayout>

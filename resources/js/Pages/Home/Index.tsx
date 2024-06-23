@@ -24,7 +24,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<
                             </div>
                         </div>
                         <div className='basis-[60%]'>
-                            <img src="/static/hero1.png" alt="hero" className='w-full' />
+                            <img src="/static/hero1.webp" alt="hero" className='w-full' />
                         </div>
                     </div>
                 </section>

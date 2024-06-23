@@ -9,7 +9,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                 <div className={`max-w-[1200px] mx-auto lg:p-4 p-2 lg:flex justify-between transition-all lg:h-fit ${isMenuOpen ? 'h-[280px]' : 'h-[80px]'} overflow-clip`}>
                     <div className="flex w-full justify-between items-center">
                         <Link href="/" className="flex gap-4 items-center">
-                            <img src="/static/ULM.png" className="lg:size-[60px] size-[40px]" alt="ULM" />
+                            <img src="/static/ULM.webp" className="lg:size-[60px] size-[40px]" alt="ULM" />
                             <div className="text-gray-700">
                                 <p className="lg:text-xl text-lg font-bold">Pendidikan Matematika</p>
                                 <p className="lg:text-sm text-[10px] font-bold">Fakultas Keguruan dan Ilmu Pendidikan</p>

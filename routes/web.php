@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 if (env('APP_ENV') === 'production') {
-    URL::forceSchema('https');
+    URL::forceScheme('https');
 }
 
 Route::get('/', [HomeController::class, 'index']);

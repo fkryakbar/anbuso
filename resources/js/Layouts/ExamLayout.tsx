@@ -28,7 +28,7 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                 </div>
                 <div className="flex items-center basis-[100%]">
                     <div className='basis-[15%] hidden lg:block'>
-                        <h1 className="text-purple-400 text-2xl font-bold ">
+                        <h1 className="text-blue-400 text-2xl font-bold ">
                             CBT
                         </h1>
                         <p className="text-xs font-semibold text-gray-600">Computer Based Test</p>
@@ -47,7 +47,7 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                 <aside className={`bg-white min-h-screen shadow-md fixed top-0 ${isSideBarOpen ? 'left-0' : 'left-[-250px]'} w-[250px] pt-5 transition-all lg:hidden z-20`}>
                     <div className='flex ml-5 items-center justify-between mr-5 mb-5'>
                         <div className=''>
-                            <h1 className="text-purple-400 text-2xl font-bold ">
+                            <h1 className="text-blue-400 text-2xl font-bold ">
                                 CBT
                             </h1>
                             <p className="text-xs font-semibold text-gray-600">Computer Based Test</p>
@@ -67,13 +67,13 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                 <div className='lg:basis-[85%] w-full relative'>
                     <main className='p-5'>{children}</main>
                     <div className="flex gap-2 fixed bottom-0 w-full bg-white p-3 lg:justify-start justify-center">
-                        <button type="button" onClick={prevQuestion} className="btn bg-purple-400 hover:bg-purple-800 text-white text-sm">
+                        <button type="button" onClick={prevQuestion} className="btn bg-blue-400 hover:bg-blue-800 text-white text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
                             </svg>
                             Sebelumnya
                         </button>
-                        <button type="button" onClick={nextQuestion} className="btn bg-purple-400 hover:bg-purple-800 text-white text-sm">
+                        <button type="button" onClick={nextQuestion} className="btn bg-blue-400 hover:bg-blue-800 text-white text-sm">
                             Selanjutnya
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
@@ -91,7 +91,7 @@ function ExamSideBar({ changeQuestion, student, paketSoal, questionTotal, questi
     if (questionTotal && questions) {
         for (let i = 0; i < questionTotal; i++) {
             buttonIndex.push(
-                <button key={i} onClick={e => changeQuestion(i)} type="button" className={`p-2 rounded border-[1px] hover:bg-amber-500 hover:text-white font-semibold text-gray-600 transition-all ${questionIndex == i ? 'bg-amber-500 text-white' : ''} ${questions[i].answer ? 'bg-purple-500 text-white' : ''}`}>
+                <button key={i} onClick={e => changeQuestion(i)} type="button" className={`p-2 rounded border-[1px] hover:bg-amber-500 hover:text-white font-semibold text-gray-600 transition-all ${questionIndex == i ? 'bg-amber-500 text-white' : ''} ${questions[i].answer ? 'bg-blue-500 text-white' : ''}`}>
                     {i + 1}
                 </button>
             );

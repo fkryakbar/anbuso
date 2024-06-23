@@ -25,7 +25,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                     Analisis
                 </h1>
                 {/* <button
-                    className="btn text-white hover:bg-purple-800 bg-purple-500"
+                    className="btn text-white hover:bg-blue-800 bg-blue-500"
                     onClick={() =>
                         (
                             document.getElementById(

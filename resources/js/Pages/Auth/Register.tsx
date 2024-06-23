@@ -1,5 +1,4 @@
 import { useEffect, FormEventHandler } from 'react';
-import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -33,7 +32,7 @@ export default function Register() {
             <div className="min-h-screen lg:flex flex-col sm:justify-center items-center pt-6 p-6 sm:pt-0 ">
                 <Head title="Register" />
                 <div className='flex justify-center'>
-                    <Link href='/' className='text-purple-400 text-5xl font-bold'>
+                    <Link href='/' className='text-blue-400 text-5xl font-bold'>
                         AnBuSo
                     </Link>
                 </div>
@@ -42,7 +41,7 @@ export default function Register() {
                         <img src="/static/register.svg" alt="register" />
                     </div>
                     <div className='basis-[50%]'>
-                        <h1 className='text-2xl font-bold text-purple-400 mb-5'>Daftar Akun</h1>
+                        <h1 className='text-2xl font-bold text-blue-400 mb-5'>Daftar Akun</h1>
                         {
                             props.flash.success && (
                                 <div role="alert" className="alert alert-success mb-5">

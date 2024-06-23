@@ -3,6 +3,8 @@ export interface User {
     name: string;
     email: string;
     role: string;
+    password?: string;
+    password_confirmation?: string;
     email_verified_at: string;
 }
 

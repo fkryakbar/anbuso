@@ -1,12 +1,9 @@
 import { useState, PropsWithChildren, ReactNode } from 'react';
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 import { usePage } from '@inertiajs/react';
 import { User } from '@/types';
 import SideMenu from '@/Components/SideMenu';
+import Account from '@/Components/Account';
 function getInitials(fullName: string) {
     const words = fullName.split(' ');
 
@@ -31,7 +28,7 @@ export default function Authenticated({ children }: PropsWithChildren) {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                             </svg>
                         </button>
-                        <Link href='/' className='text-purple-400 text-3xl font-bold'>
+                        <Link href='/' className='text-blue-400 text-3xl font-bold'>
                             AnBuSo
                         </Link>
                     </div>
@@ -43,12 +40,15 @@ export default function Authenticated({ children }: PropsWithChildren) {
                         </div>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                             <li>
-                                <Link href='/dashboard/akun'>
+                                <button onClick={() => (document.getElementById(
+                                    "account"
+                                ) as HTMLDialogElement
+                                ).showModal()}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     </svg>
                                     Akun
-                                </Link>
+                                </button>
                             </li>
                             <li>
                                 <Link href={route('logout')} className='text-red-500'>
@@ -61,10 +61,11 @@ export default function Authenticated({ children }: PropsWithChildren) {
                         </ul>
                     </div>
                 </nav>
+                <Account user={user} />
                 <div className='flex'>
                     <aside className={`bg-white min-h-screen shadow-md fixed top-0 ${isSideBarOpen ? 'left-0' : 'left-[-250px]'} w-[250px] pt-5 transition-all lg:hidden z-20`}>
                         <div className='flex ml-5 items-center justify-between mr-5'>
-                            <Link href='/' className='text-purple-400 text-3xl font-bold'>
+                            <Link href='/' className='text-blue-400 text-3xl font-bold'>
                                 AnBuSo
                             </Link>
                             <button onClick={e => setIsSideBarOpen(false)}>

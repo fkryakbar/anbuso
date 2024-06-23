@@ -53,13 +53,13 @@ export default function Settings({ paketSoal }: { paketSoal: PaketSoal }) {
                     <div className="form-control mt-2">
                         <label className="cursor-pointer label">
                             <span className="label-text">Tampilkan Skor Akhir</span>
-                            <input type="checkbox" className="toggle bg-gray-500  hover:bg-purple-700 border-gray-500 checked:bg-purple-500 checked:border-purple-500" name="show_correct_answer" onChange={e => setData('show_correct_answer', e.target.checked ? 1 : 0)} defaultChecked={data.show_correct_answer ? true : false} disabled={processing} />
+                            <input type="checkbox" className="toggle bg-gray-500  hover:bg-blue-700 border-gray-500 checked:bg-blue-500 checked:border-blue-500" name="show_correct_answer" onChange={e => setData('show_correct_answer', e.target.checked ? 1 : 0)} defaultChecked={data.show_correct_answer ? true : false} disabled={processing} />
                         </label>
                     </div>
                     <div className="form-control">
                         <label className="cursor-pointer label">
                             <span className="label-text">Terima Respons</span>
-                            <input type="checkbox" className="toggle bg-gray-500  hover:bg-purple-700 border-gray-500 checked:bg-purple-500 checked:border-purple-500" name="accept_responses" onChange={e => setData('accept_responses', e.target.checked ? 1 : 0)} defaultChecked={data.accept_responses ? true : false} disabled={processing} />
+                            <input type="checkbox" className="toggle bg-gray-500  hover:bg-blue-700 border-gray-500 checked:bg-blue-500 checked:border-blue-500" name="accept_responses" onChange={e => setData('accept_responses', e.target.checked ? 1 : 0)} defaultChecked={data.accept_responses ? true : false} disabled={processing} />
                         </label>
                     </div>
                     <div className="flex items-center justify-end mt-4">

@@ -15,7 +15,7 @@ class ExamController extends Controller
 {
     public function index($slug)
     {
-        $paketSoal = PaketSoal::where('slug', $slug)->firstOrFail();
+        $paketSoal = PaketSoal::where('slug', $slug)->with('questions')->firstOrFail();
 
         if (session()->has('student') && $paketSoal->accept_responses == 1 && Student::where('u_id', session('student')['u_id'])->first()) {
             $u_id = session('student')['u_id'];

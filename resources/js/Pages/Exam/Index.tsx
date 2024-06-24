@@ -5,6 +5,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
 export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
+
     const { data, setData, errors, post, processing } = useForm({
         name: '',
         grade: ''
@@ -27,7 +28,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                     Computer Based Test
                 </h3>
                 {
-                    paketSoal.accept_responses ? (
+                    paketSoal.accept_responses && paketSoal.questions && paketSoal.questions.length > 0 ? (
                         <form onSubmit={submit} method="post" autoComplete="off" autoCorrect="off">
                             <div className="text-center pt-3">
                                 <input type="text" placeholder="Nama" name="name" className="input w-full  input-bordered mt-3" onChange={e => { setData('name', e.target.value) }} disabled={processing} />

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PenskoranEvent;
 use App\Models\Answer;
 use App\Models\PaketSoal;
 use App\Models\Student;
@@ -53,6 +54,14 @@ class ExamController extends Controller
         $student =  Student::create($request->all());
         Session::put('student', $student);
 
+        $student = Student::where('paket_soal_slug', $slug)->where('u_id', $student->u_id)->with(['answers' => function ($query) {
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+                ->orderBy('questions.id', 'ASC')
+                ->select('answers.*');
+        }])->first();
+        $student->result = $student->result($slug);
+        PenskoranEvent::dispatch($paketSoal->slug,  $student);
+
         return back();
     }
 
@@ -85,6 +94,13 @@ class ExamController extends Controller
                 $if_answer_exist = Answer::create($request->all());
             }
 
+            $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
+                $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+                    ->orderBy('questions.id', 'ASC')
+                    ->select('answers.*');
+            }])->first();
+            $student->result = $student->result($slug);
+            PenskoranEvent::dispatch($paketSoal->slug,  $student);
 
             return response([
                 'message' => 'Jawaban disimpan',

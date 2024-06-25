@@ -1,7 +1,7 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { timeFormat } from "@/helper/helper";
 import { DayaPembeda, PaketSoal, Reliability, Student, TingkatKesulitan, Validity } from "@/types";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import Interpretasi from "./Partials/Interpretasi";
 
 export default function Summary({ paketSoal, validity, filteredStudents, reliabilitas, tingkatKesulitan, dayaPembeda }: { paketSoal: PaketSoal, validity: Validity | null, filteredStudents: Student[], reliabilitas: Reliability | null, tingkatKesulitan: TingkatKesulitan[] | null, dayaPembeda: DayaPembeda | null }) {
@@ -49,11 +49,22 @@ export default function Summary({ paketSoal, validity, filteredStudents, reliabi
                     Analisis
                 </h1>
             </div>
+            <div className="mt-5 justify-end flex">
+                <button onClick={() => {
+                    router.reload({
+                        only: ['students']
+                    })
+                }} className="btn btn-sm bg-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                </button>
+            </div>
             <div role="tablist" className="tabs tabs-lifted mt-5 lg:tabs-lg">
                 <Link role="tab" href={route('summary', { slug: paketSoal.slug })} className="tab">Penskoran</Link>
                 <Link role="tab" href={route('detail', { slug: paketSoal.slug })} className="tab tab-active">Analisis Butir Soal</Link>
             </div>
-            <div className="flex flex-col gap-3 bg-white p-5 border-l-[1px] border-r-[1px] border-b-[1px]">
+            <div className="flex flex-col gap-3 bg-white p-5 border-l-[1px] border-r-[1px] border-b-[1px] overflow-x-auto">
                 <div className="flex justify-between mt-5">
                     <h1 className="text-xl font-semibold text-gray-700">Validitas dan Tingkat Kesulitan Butir Soal</h1>
                     <button onClick={() => (document.getElementById(
@@ -95,8 +106,7 @@ export default function Summary({ paketSoal, validity, filteredStudents, reliabi
                 {
                     validity ? (<>
                         <div className="overflow-x-auto">
-                            <table className="table border-[1px] min-w-[1000px]">
-                                {/* head */}
+                            <table className="table table-xs border-[1px] min-w-[1000px]">
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -114,7 +124,6 @@ export default function Summary({ paketSoal, validity, filteredStudents, reliabi
                                             ) : null
                                         }
                                         <th className="text-center font-semibold text-black text-lg">Total Benar</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -201,7 +210,6 @@ export default function Summary({ paketSoal, validity, filteredStudents, reliabi
                         </svg>
                     </button>
                     <Interpretasi id="reliabilitas" title="Interpretasi Reliabilitas Soal">
-                        {/* <h1 className="font-bold text-lg">1. Validitas</h1> */}
                         <div className="ml-4">
                             <h2 className="font-semibold">Pengertian</h2>
                             <p className="text-justify indent-10">Reliabilitas adalah ukuran yang menunjukkan sejauh mana hasil pengukuran konsisten atau stabil ketika pengukuran dilakukan berulang kali dalam kondisi yang sama. Reliabilitas yang tinggi berarti hasil tes dapat diandalkan dan konsisten dari waktu ke waktu.</p>
@@ -270,7 +278,6 @@ export default function Summary({ paketSoal, validity, filteredStudents, reliabi
                     dayaPembeda ? (<>
                         <div className="overflow-x-auto">
                             <table className="table border-[1px] min-w-[1000px]">
-                                {/* head */}
                                 <thead>
                                     <tr>
                                         <th></th>

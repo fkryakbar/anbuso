@@ -1,3 +1,5 @@
+import EchoPackage from "laravel-echo";
+import Pusher from "pusher-js";
 import Swal from "sweetalert2";
 
 export const timeFormat = function (timeString: string) {
@@ -39,3 +41,9 @@ export function copyText(text: string) {
     document.body.removeChild(textArea);
 
 }
+
+export var pusher = new Pusher('f61ad526f74298547fab', {
+    cluster: 'ap1'
+});
+
+

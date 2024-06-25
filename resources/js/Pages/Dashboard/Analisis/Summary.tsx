@@ -68,7 +68,6 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
     useEffect(() => {
         const channel = pusher.subscribe(`Penskoran.${paketSoal.slug}`)
         channel.bind('PenskoranEvent', (data: { student: Student }) => {
-            console.log(data.student);
 
             setPenskoranData(prevData => {
                 if (prevData) {

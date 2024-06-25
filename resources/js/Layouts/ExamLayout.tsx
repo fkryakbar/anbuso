@@ -17,7 +17,7 @@ interface ExamLayout {
 export default function GuestExamLayout({ children, paketSoal, nextQuestion, prevQuestion, questionIndex, questionTotal, student, changeQuestion, questions }: ExamLayout) {
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
     return (
-        <div className='bg-gray-100'>
+        <div className='bg-gray-100 min-h-screen'>
             <nav className='bg-white p-3 px-5 flex items-center shadow-md'>
                 <div className='flex items-center gap-2 mr-2'>
                     <button className='lg:hidden' onClick={e => setIsSideBarOpen(true)}>

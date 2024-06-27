@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AnalisisButirSoal;
+use App\Exports\AnalisisExport;
 use App\Models\Answer;
 use App\Models\PaketSoal;
 use App\Models\Student;
@@ -10,6 +11,7 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AnalisisController extends Controller
 {
@@ -35,7 +37,6 @@ class AnalisisController extends Controller
         foreach ($students as $key => $student) {
             $student->result = $student->result($slug);
         }
-
         return Inertia::render('Dashboard/Analisis/Summary', compact('paketSoal', 'students'));
     }
 
@@ -66,7 +67,6 @@ class AnalisisController extends Controller
         $tingkatKesulitan = $this->tingkat_kesukaran($filteredStudents);
 
         $dayaPembeda = $this->daya_pembeda($filteredStudents);
-
         return Inertia::render('Dashboard/Analisis/Detail', compact('paketSoal', 'validity', 'filteredStudents', 'reliabilitas', 'tingkatKesulitan', 'dayaPembeda'));
     }
 
@@ -79,5 +79,12 @@ class AnalisisController extends Controller
         $student->delete();
 
         return back();
+    }
+
+    public function download($slug)
+    {
+        PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->firstOrFail();
+
+        return Excel::download(new AnalisisExport($slug), 'Analisis.xlsx');
     }
 }

@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function
     Route::get('/analisis/{slug}/summary', [AnalisisController::class, 'summary'])->name('summary');
     Route::delete('/analisis/{slug}/{u_id}/summary', [AnalisisController::class, 'delete_student'])->name('delete_student');
     Route::get('/analisis/{slug}/detail', [AnalisisController::class, 'detail'])->name('detail');
+    Route::get('/analisis/{slug}/download', [AnalisisController::class, 'download'])->name('download_analisis');
 });
 
 

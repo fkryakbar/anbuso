@@ -121,19 +121,29 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
                 </ul>
             </div>
             <div className="p-5 bg-white rounded-md shadow-sm w-full">
-                <div className="flex gap-3 p-3">
-                    <div className="lg:basis-[4%] basis-[15%]">
-                        <img src="/static/analysis.png" alt="logo" width="100%" />
-                    </div>
-                    <div className="block ">
-                        <p className="lg:text-xl text-lg font-semibold text-slate-600">
-                            {paketSoal.title}
-                        </p>
-                        <div className="flex justify-between items-center">
-                            <p className="text-xs text-slate-400">
-                                {timeFormat(paketSoal.created_at)}
-                            </p>
+                <div className="flex gap-3 justify-between items-center">
+                    <div className="flex gap-3 items-center">
+                        <div className="w-[60px]">
+                            <img src="/static/analysis.png" alt="logo" width="100%" />
                         </div>
+                        <div className="block">
+                            <p className="lg:text-xl text-lg font-semibold text-slate-600">
+                                {paketSoal.title}
+                            </p>
+                            <div className="flex justify-between items-center">
+                                <p className="text-xs text-slate-400">
+                                    {timeFormat(paketSoal.created_at)}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a href={route('download_analisis', { slug: paketSoal.slug })} className="btn btn-sm bg-blue-500 hover:bg-blue-900 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                            Unduh Analisis
+                        </a>
                     </div>
                 </div>
                 <h1 className="text-gray-500 font-semibold text-xl mt-4">

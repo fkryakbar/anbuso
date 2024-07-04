@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('question_slug');
             $table->foreign('question_slug')->references('slug')->on('questions')->onDelete('cascade');
             $table->string('answer');
-            $table->boolean('result');
+            $table->integer('score');
             $table->timestamps();
         });
     }

@@ -24,12 +24,28 @@ class SoalController extends Controller
         $paketSoal = PaketSoal::where('slug', $slug)->where('user_id', Auth::user()->id)->firstOrFail();
         $request->validate([
             'content' => 'required',
-            'answer_key' => 'required'
+            'type' => 'required',
         ], [
             'content.required' => 'Konten Soal Wajib diisi',
-            'answer_key.required' => 'Kunci jawaban wajib disi'
+            'type.required' => 'Tipe soal wajib dipilih'
         ]);
 
+        if ($request->type == 'multiple_choice') {
+            $request->merge([
+                'format' => [
+                    'option_a' => $request->option_a,
+                    'option_b' => $request->option_b,
+                    'option_c' => $request->option_c,
+                    'option_d' => $request->option_d,
+                    'option_e' => $request->option_e,
+                    'answer_key' => $request->answer_key,
+                ]
+            ]);
+        } else {
+            $request->merge([
+                'format' => []
+            ]);
+        }
 
         $request->mergeIfMissing([
             'slug' => Str::random(5) . '-' . Str::random(5) . '-' . Str::random(5),
@@ -37,7 +53,7 @@ class SoalController extends Controller
             'paket_soal_slug' => $paketSoal->slug,
         ]);
 
-        Question::create($request->all());
+        Question::create($request->except(['answer_key', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e']));
         return back();
     }
     public function delete($paket_soal_slug, $slug)
@@ -68,15 +84,33 @@ class SoalController extends Controller
         $request->validate(
             [
                 'content' => 'required',
-                'answer_key' => 'required'
+                'type' => 'required',
             ],
             [
                 'content.required' => 'Konten Soal Wajib diisi',
-                'answer_key.required' => 'Kunci jawaban wajib disi'
+                'type.required' => 'Tipe soal wajib dipilih'
             ]
         );
+
+        if ($request->type == 'multiple_choice') {
+            $request->merge([
+                'format' => [
+                    'option_a' => $request->option_a,
+                    'option_b' => $request->option_b,
+                    'option_c' => $request->option_c,
+                    'option_d' => $request->option_d,
+                    'option_e' => $request->option_e,
+                    'answer_key' => $request->answer_key,
+                ]
+            ]);
+        } else {
+            $request->merge([
+                'format' => []
+            ]);
+        }
+
         $question = Question::where('slug', $slug)->where('paket_soal_slug', $paket_soal_slug)->where('user_id', Auth::user()->id)->firstOrFail();
-        $question->update($request->all());
+        $question->update($request->except(['answer_key', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e']));
         return to_route('soal', [
             'slug' => $paket_soal_slug
         ]);

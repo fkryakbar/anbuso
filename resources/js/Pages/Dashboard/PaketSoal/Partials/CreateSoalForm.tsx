@@ -9,24 +9,25 @@ import { PaketSoal } from "@/types";
 export default function CreateSoalForm({ paketSoal }: { paketSoal: PaketSoal }) {
     const { data, processing, errors, setData, post, recentlySuccessful, progress, reset } = useForm({
         content: '',
+        type: '',
         option_a: '',
         option_b: '',
         option_c: '',
         option_d: '',
         option_e: '',
-        answer_key: ''
+        answer_key: 'a'
     });
 
+    console.log(data);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        console.log(data);
 
         post(route('create-question', {
             slug: paketSoal.slug
         }), {
             onSuccess: () => {
-                reset('content', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e', 'answer_key');
+                reset('content', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e', 'answer_key', 'type');
             }
         })
     }
@@ -52,20 +53,31 @@ export default function CreateSoalForm({ paketSoal }: { paketSoal: PaketSoal }) 
                 <form onSubmit={submit} autoComplete="off" autoCorrect="off" className="mt-5">
                     <RichEditor setData={setData} value={data.content} trigger={recentlySuccessful} />
                     <InputError message={errors.content} className="mt-2" />
-                    <TextInput placeholder="A." className="mt-3" onChange={e => setData('option_a', e.target.value)} value={data.option_a} disabled={processing} />
-                    <TextInput placeholder="B." className="mt-3" onChange={e => setData('option_b', e.target.value)} value={data.option_b} disabled={processing} />
-                    <TextInput placeholder="C." className="mt-3" onChange={e => setData('option_c', e.target.value)} value={data.option_c} disabled={processing} />
-                    <TextInput placeholder="D." className="mt-3" onChange={e => setData('option_d', e.target.value)} value={data.option_d} disabled={processing} />
-                    <TextInput placeholder="E." className="mt-3" onChange={e => setData('option_e', e.target.value)} value={data.option_e} disabled={processing} />
-                    <select className="select select-bordered w-full mt-4" value={data.answer_key} onChange={e => { setData('answer_key', e.target.value) }} disabled={processing}>
-                        <option disabled value={''}>Kunci Jawaban</option>
-                        <option value={'a'}>A</option>
-                        <option value={'b'}>B</option>
-                        <option value={'c'}>C</option>
-                        <option value={'d'}>D</option>
-                        <option value={'e'}>E</option>
+                    <select className="select select-bordered w-full mt-4" value={data.type} onChange={e => { setData('type', e.target.value) }} disabled={processing}>
+                        <option disabled value={''}>Tipe Soal</option>
+                        <option value={'multiple_choice'}>Pilihan Ganda</option>
+                        <option value={'essay'}>Esai</option>
                     </select>
-                    <InputError message={errors.answer_key} className="mt-2" />
+                    <InputError message={errors.type} className="mt-2" />
+                    {
+                        data.type == 'multiple_choice' ? (
+                            <>
+                                <TextInput placeholder="A." className="mt-3" onChange={e => setData('option_a', e.target.value)} value={data.option_a} disabled={processing} />
+                                <TextInput placeholder="B." className="mt-3" onChange={e => setData('option_b', e.target.value)} value={data.option_b} disabled={processing} />
+                                <TextInput placeholder="C." className="mt-3" onChange={e => setData('option_c', e.target.value)} value={data.option_c} disabled={processing} />
+                                <TextInput placeholder="D." className="mt-3" onChange={e => setData('option_d', e.target.value)} value={data.option_d} disabled={processing} />
+                                <TextInput placeholder="E." className="mt-3" onChange={e => setData('option_e', e.target.value)} value={data.option_e} disabled={processing} />
+                                <select className="select select-bordered w-full mt-4" value={data.answer_key} onChange={e => { setData('answer_key', e.target.value) }} disabled={processing}>
+                                    <option value={'a'}>A</option>
+                                    <option value={'b'}>B</option>
+                                    <option value={'c'}>C</option>
+                                    <option value={'d'}>D</option>
+                                    <option value={'e'}>E</option>
+                                </select>
+                                <InputError message={errors.answer_key} className="mt-2" />
+                            </>
+                        ) : null
+                    }
                     {
                         progress ? (
                             <progress className={`progress progress-success w-full`} value={progress.percentage} max="100"></progress>

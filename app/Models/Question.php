@@ -19,4 +19,7 @@ class Question extends Model
     {
         return $this->hasOne(Answer::class, 'question_slug', 'slug');
     }
+    protected $casts = [
+        'format' => 'json',
+    ];
 }

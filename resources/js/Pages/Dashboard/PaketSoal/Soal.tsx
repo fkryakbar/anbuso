@@ -130,7 +130,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                         <div key={index} className="mt-3 bg-white p-5 shadow rounded-md">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h1 className="text-2xl font-bold text-gray-600">Soal Nomor {index + 1}</h1>
+                                    <h1 className="text-2xl font-bold text-gray-600 flex items-center gap-3">Soal Nomor {index + 1} <span className="font-semibold text-xs p-1 rounded-md bg-green-200 text-green-800">{q.type == 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}</span></h1>
                                     <span className="text-xs text-gray-600">{timeFormat(q.created_at)}</span>
                                 </div>
                                 <div className="dropdown dropdown-end">
@@ -166,55 +166,55 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                             </div>
                             <div className="mt-3">
                                 {
-                                    q.option_a && (
+                                    q.format.option_a && (
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="a" />
-                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'a' ? 'bg-green-400' : ''}`} htmlFor="a">
-                                                A. {q.option_a}
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'a' ? 'bg-green-400' : ''}`} htmlFor="a">
+                                                A. {q.format.option_a}
                                             </label>
                                             <br />
                                         </div>
                                     )
                                 }
                                 {
-                                    q.option_b && (
+                                    q.format.option_b && (
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="b" />
-                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'b' ? 'bg-green-400' : ''}`} htmlFor="b">
-                                                B. {q.option_b}
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'b' ? 'bg-green-400' : ''}`} htmlFor="b">
+                                                B. {q.format.option_b}
                                             </label>
                                             <br />
                                         </div>
                                     )
                                 }
                                 {
-                                    q.option_c && (
+                                    q.format.option_c && (
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="c" />
-                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'c' ? 'bg-green-400' : ''}`} htmlFor="c">
-                                                C. {q.option_c}
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'c' ? 'bg-green-400' : ''}`} htmlFor="c">
+                                                C. {q.format.option_c}
                                             </label>
                                             <br />
                                         </div>
                                     )
                                 }
                                 {
-                                    q.option_d && (
+                                    q.format.option_d && (
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="d" />
-                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'd' ? 'bg-green-400' : ''}`} htmlFor="d">
-                                                D. {q.option_d}
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'd' ? 'bg-green-400' : ''}`} htmlFor="d">
+                                                D. {q.format.option_d}
                                             </label>
                                             <br />
                                         </div>
                                     )
                                 }
                                 {
-                                    q.option_e && (
+                                    q.format.option_e && (
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="e" />
-                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.answer_key == 'e' ? 'bg-green-400' : ''}`} htmlFor="e">
-                                                E. {q.option_e}
+                                            <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'e' ? 'bg-green-400' : ''}`} htmlFor="e">
+                                                E. {q.format.option_e}
                                             </label>
                                             <br />
                                         </div>

@@ -19,12 +19,8 @@ return new class extends Migration
             $table->foreign('paket_soal_slug')->references('slug')->on('paket_soal')->onDelete('cascade');
             $table->string('image_path')->nullable();
             $table->longText('content')->nullable();
-            $table->string('option_a')->nullable();
-            $table->string('option_b')->nullable();
-            $table->string('option_c')->nullable();
-            $table->string('option_d')->nullable();
-            $table->string('option_e')->nullable();
-            $table->string('answer_key');
+            $table->string('type')->nullable();
+            $table->json('format')->nullable();
             $table->timestamps();
         });
     }

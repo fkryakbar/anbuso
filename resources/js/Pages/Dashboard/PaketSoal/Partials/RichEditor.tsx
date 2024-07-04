@@ -57,7 +57,6 @@ const RichEditor = ({ setData, value, trigger }: { setData: any, value: string, 
         if (quill == null) return
 
         const editor = document.querySelector('.ql-editor')
-        console.log(editor);
         if (editor) {
             editor.innerHTML = value
         }

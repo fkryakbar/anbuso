@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('paket_soal_slug')->references('slug')->on('paket_soal')->onDelete('cascade');
             $table->string('question_slug');
             $table->foreign('question_slug')->references('slug')->on('questions')->onDelete('cascade');
-            $table->string('answer');
+            $table->longText('answer');
             $table->integer('score');
             $table->timestamps();
         });

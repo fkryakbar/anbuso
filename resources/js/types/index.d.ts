@@ -56,6 +56,10 @@ export interface Student {
     paket_soal_slug: string,
     u_id: string,
     answers?: Answer[],
+    groupedAnswer: {
+        multiple_choice?: Answer[],
+        essay?: Answer[],
+    },
     result?: {
         score: number,
         trueAnswers: number,
@@ -74,7 +78,8 @@ export interface Answer {
     answer: string,
     paket_soal_slug: string,
     question_slug: string,
-    result: boolean | number,
+    score: number,
+    type?: string,
     created_at: string,
     updated_at: string
 }

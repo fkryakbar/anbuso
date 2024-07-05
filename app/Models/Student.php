@@ -18,16 +18,17 @@ class Student extends Model
 
     public function result($slug)
     {
-        $answers = Answer::where('u_id', $this->u_id)->get();
-        $question_total = Question::where('paket_soal_slug', $slug)->count();;
+        $answers = Answer::where('u_id', $this->u_id)->with('question')->get();
+        $question_total = Question::where('paket_soal_slug', $slug)->count();
         $trueAnswers = 0;
         foreach ($answers as $key => $answer) {
-            if ($answer->result == 1) {
-                $trueAnswers++;
-            }
+            $trueAnswers += $answer->score;
+            // if ($answer->score == 1 && $answer->question->type == 'multiple_choice') {
+            // }
         }
         $progress = round(($answers->count() / $question_total) * 100, 2);
-        $score_total = round(($trueAnswers / $question_total) * 100, 2);
+        // $score_total = round(($trueAnswers / $question_total) * 100, 2);
+        $score_total = $trueAnswers;
 
         return [
             'score' => $score_total,

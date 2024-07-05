@@ -10,7 +10,7 @@ import Echo from "laravel-echo";
 
 export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal, students: Student[] }) {
     const [penskoranData, setPenskoranData] = useState<Student[]>();
-    const [scoreDetailData, setScoreDetailData] = useState<Answer[] | null>(null);
+    const [scoreDetailData, setScoreDetailData] = useState<{ multiple_choice?: Answer[], essay?: Answer[] } | null>(null);
 
     const deleteStudent = (u_id: string) => {
         Swal.fire({
@@ -44,17 +44,18 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
     }
     const openScoreDetail = (u_id: string) => {
         (document.getElementById(
-            "scoreDetail"
+            u_id
         ) as HTMLDialogElement
         ).showModal()
 
-        penskoranData?.forEach((student) => {
-            if (student.u_id == u_id) {
-                if (student.answers) {
-                    setScoreDetailData(student.answers)
-                }
-            }
-        })
+        // penskoranData?.forEach((student) => {
+        //     if (student.u_id == u_id) {
+        //         if (student.answers) {
+        //             setScoreDetailData(student.groupedAnswer)
+
+        //         }
+        //     }
+        // })
 
     }
 
@@ -81,7 +82,7 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
                         updatedData.push(data.student);
                     }
                     if (data.student.answers) {
-                        setScoreDetailData(data.student.answers)
+                        // setScoreDetailData(data.student.answers)
                     }
                     return updatedData;
                 }
@@ -99,7 +100,6 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
     return (
         <DashboardLayout>
             <Head title="Analisis" />
-            <ScoreDetail answers={scoreDetailData} questions={paketSoal.questions} />
             <div className="text-sm breadcrumbs">
                 <ul>
                     <li>
@@ -197,7 +197,10 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
                                         </div>
                                     </div>
                                 </div>
+                                <ScoreDetail id={student.u_id} answers={student.groupedAnswer} questions={paketSoal.questions} />
+
                             </div>
+
                         ))
                     ) : (
                         <>

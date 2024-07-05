@@ -1,6 +1,7 @@
 import EchoPackage from "laravel-echo";
 import Pusher from "pusher-js";
 import Swal from "sweetalert2";
+import { useState, useEffect } from 'react';
 
 export const timeFormat = function (timeString: string) {
     var d = new Date(timeString);
@@ -47,3 +48,19 @@ export var pusher = new Pusher('f61ad526f74298547fab', {
 });
 
 
+
+export function useDebounce(value: any, delay: number) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}

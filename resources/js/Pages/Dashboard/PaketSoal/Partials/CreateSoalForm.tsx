@@ -18,7 +18,6 @@ export default function CreateSoalForm({ paketSoal }: { paketSoal: PaketSoal }) 
         answer_key: 'a'
     });
 
-    console.log(data);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();

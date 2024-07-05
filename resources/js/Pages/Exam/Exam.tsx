@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Latex from "react-latex-next";
 import 'katex/dist/katex.min.css';
 import Swal from "sweetalert2";
+import RichEditor from "./Partials/RichEditor";
 
 export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, student: { session: Student } }) {
     const [questions, setQuestions] = useState(paketSoal.questions);
@@ -73,18 +74,18 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
     }
 
 
-    const saveAnswer = (userAnswer: string, key: string, question_slug: string) => {
+    const saveAnswerMultipleChoice = (userAnswer: string, key: string, question_slug: string) => {
         const payload = {
             question_slug: question_slug,
             answer: userAnswer,
-            result: false,
+            score: 0,
         }
         if (userAnswer == key) {
-            payload.result = true;
+            payload.score = 1;
         }
 
         // router.post(route('save_answer', { slug: paketSoal.slug }), payload);
-        axios.post(route('save_answer', { slug: paketSoal.slug }), payload)
+        axios.post(route('save_answer_multiple_choice', { slug: paketSoal.slug }), payload)
             .then((res) => {
                 if (questions) {
                     const currentQuestion = questions.find(q => q.slug == question_slug)
@@ -122,9 +123,10 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
 
             })
     }
+
     return (
         <ExamLayout changeQuestion={changeQuestion} paketSoal={paketSoal} questions={questions} nextQuestion={nextQuestion} prevQuestion={prevQuestion} questionIndex={questionIndex} questionTotal={questionTotal} student={student.session}>
-            <Head title={`${paketSoal.title} | Exam Mode`} />
+            <Head title={`${paketSoal.title} | Exam Mode`} ></Head>
             {
                 questions && questions.length > 0 ? (questions.map((q, index) => (
 
@@ -135,59 +137,65 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                         </div>
                         <div className="mt-5">
                             {
-                                q.option_a ? (
-                                    <div className="flex mb-4">
-                                        <input onChange={event => { saveAnswer('a', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'a' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-a`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-a`}>
-                                            A. {q.option_a}
-                                        </label>
-                                        <br />
-                                    </div>
-                                ) : null
-                            }
-                            {
-                                q.option_b ? (
-                                    <div className="flex mb-4">
-                                        <input onChange={event => { saveAnswer('b', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'b' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-b`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-b`}>
-                                            B. {q.option_b}
-                                        </label>
-                                        <br />
-                                    </div>
-                                ) : null
-                            }
-                            {
-                                q.option_c ? (
-                                    <div className="flex mb-4">
-                                        <input onChange={event => { saveAnswer('c', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'c' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-c`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-c`}>
-                                            C. {q.option_c}
-                                        </label>
-                                        <br />
-                                    </div>
-                                ) : null
-                            }
-                            {
-                                q.option_d ? (
-                                    <div className="flex mb-4">
-                                        <input onChange={event => { saveAnswer('d', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'd' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-d`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-d`}>
-                                            D. {q.option_d}
-                                        </label>
-                                        <br />
-                                    </div>
-                                ) : null
-                            }
-                            {
-                                q.option_e ? (
-                                    <div className="flex mb-4">
-                                        <input onChange={event => { saveAnswer('e', q.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'e' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-e`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
-                                        <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-e`}>
-                                            E. {q.option_e}
-                                        </label>
-                                        <br />
-                                    </div>
-                                ) : null
+                                q.type == 'multiple_choice' ? (<>
+                                    {
+                                        q.format.option_a ? (
+                                            <div className="flex mb-4">
+                                                <input onChange={event => { saveAnswerMultipleChoice('a', q.format.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'a' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-a`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                                <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-a`}>
+                                                    A. {q.format.option_a}
+                                                </label>
+                                                <br />
+                                            </div>
+                                        ) : null
+                                    }
+                                    {
+                                        q.format.option_b ? (
+                                            <div className="flex mb-4">
+                                                <input onChange={event => { saveAnswerMultipleChoice('b', q.format.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'b' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-b`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                                <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-b`}>
+                                                    B. {q.format.option_b}
+                                                </label>
+                                                <br />
+                                            </div>
+                                        ) : null
+                                    }
+                                    {
+                                        q.format.option_c ? (
+                                            <div className="flex mb-4">
+                                                <input onChange={event => { saveAnswerMultipleChoice('c', q.format.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'c' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-c`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                                <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-c`}>
+                                                    C. {q.format.option_c}
+                                                </label>
+                                                <br />
+                                            </div>
+                                        ) : null
+                                    }
+                                    {
+                                        q.format.option_d ? (
+                                            <div className="flex mb-4">
+                                                <input onChange={event => { saveAnswerMultipleChoice('d', q.format.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'd' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-d`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                                <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-d`}>
+                                                    D. {q.format.option_d}
+                                                </label>
+                                                <br />
+                                            </div>
+                                        ) : null
+                                    }
+                                    {
+                                        q.format.option_e ? (
+                                            <div className="flex mb-4">
+                                                <input onChange={event => { saveAnswerMultipleChoice('e', q.format.answer_key, q.slug); event.target.checked }} defaultChecked={q.answer ? (q.answer.answer == 'e' ? true : false) : false} type="radio" name={q.slug} id={`${q.slug}-e`} className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" />
+                                                <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] peer-checked/answer:bg-blue-200 cursor-pointer`} htmlFor={`${q.slug}-e`}>
+                                                    E. {q.format.option_e}
+                                                </label>
+                                                <br />
+                                            </div>
+                                        ) : null
+                                    }
+                                </>) : (<>
+                                    <RichEditor question={q} questions={questions} setQuestions={setQuestions} />
+                                </>)
                             }
                         </div>
                     </div>

@@ -65,7 +65,7 @@ class ExamController extends Controller
         return back();
     }
 
-    public function save_answer(Request $request, $slug)
+    public function save_answer_multiple_choice(Request $request, $slug)
     {
 
         $paketSoal = PaketSoal::where('slug', $slug)->firstOrFail();
@@ -80,7 +80,7 @@ class ExamController extends Controller
             $request->validate([
                 'question_slug' => 'required',
                 'answer' => 'required|max:10',
-                'result' => 'required',
+                'score' => 'required',
             ]);
             $request->merge([
                 'paket_soal_slug' => $slug,
@@ -89,7 +89,54 @@ class ExamController extends Controller
 
             $if_answer_exist = Answer::where('u_id', $request->u_id)->where('question_slug', $request->question_slug)->where('paket_soal_slug', $slug)->first();
             if ($if_answer_exist) {
-                $if_answer_exist->update($request->only(['answer', 'result']));
+                $if_answer_exist->update($request->only(['answer', 'score']));
+            } else {
+                $if_answer_exist = Answer::create($request->all());
+            }
+
+            $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
+                $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+                    ->orderBy('questions.id', 'ASC')
+                    ->select('answers.*');
+            }])->first();
+            $student->result = $student->result($slug);
+            PenskoranEvent::dispatch($paketSoal->slug,  $student);
+
+            return response([
+                'message' => 'Jawaban disimpan',
+                'answer' => $if_answer_exist
+            ]);
+        }
+
+        return response([
+            'message' => 'Unauthenticated'
+        ], 401);
+    }
+    public function save_answer_essay(Request $request, $slug)
+    {
+
+        $paketSoal = PaketSoal::where('slug', $slug)->firstOrFail();
+
+        if ($paketSoal->accept_responses == 0) {
+            return response([
+                'message' => 'Ujian Telah ditutup'
+            ], 403);
+        }
+
+        if ($request->session()->has('student')) {
+            $request->validate([
+                'question_slug' => 'required',
+                'answer' => 'required',
+                'score' => 'required',
+            ]);
+            $request->merge([
+                'paket_soal_slug' => $slug,
+                'u_id' => $request->session()->get('student')['u_id']
+            ]);
+
+            $if_answer_exist = Answer::where('u_id', $request->u_id)->where('question_slug', $request->question_slug)->where('paket_soal_slug', $slug)->first();
+            if ($if_answer_exist) {
+                $if_answer_exist->update($request->only(['answer', 'score']));
             } else {
                 $if_answer_exist = Answer::create($request->all());
             }

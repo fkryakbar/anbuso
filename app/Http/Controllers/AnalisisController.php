@@ -31,13 +31,28 @@ class AnalisisController extends Controller
         $students = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
             $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
                 ->orderBy('questions.id', 'ASC')
-                ->select('answers.*');
+                ->select('answers.*', 'questions.type');
         }])->get();
-
         foreach ($students as $key => $student) {
             $student->result = $student->result($slug);
+            $student->groupedAnswer = $student->answers->groupBy('type');
         }
+        // dd($students);
         return Inertia::render('Dashboard/Analisis/Summary', compact('paketSoal', 'students'));
+    }
+
+    public function updateScore($slug, Request $request)
+    {
+        $request->validate([
+            'answer_id' => 'required|numeric',
+            'score' => 'required|numeric'
+        ]);
+
+        $answer = Answer::where('id', $request->answer_id)->where('paket_soal_slug', $slug)->firstOrFail();
+        $answer->update([
+            'score' => $request->score
+        ]);
+        return  to_route('summary', ['slug' => $slug]);
     }
 
     public function detail($slug)

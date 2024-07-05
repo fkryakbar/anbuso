@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function
 
     Route::get('/analisis', [AnalisisController::class, 'index'])->name('analisis');
     Route::get('/analisis/{slug}/summary', [AnalisisController::class, 'summary'])->name('summary');
+    Route::post('/analisis/{slug}/summary', [AnalisisController::class, 'updateScore'])->name('updateScore');
     Route::delete('/analisis/{slug}/{u_id}/summary', [AnalisisController::class, 'delete_student'])->name('delete_student');
     Route::get('/analisis/{slug}/detail', [AnalisisController::class, 'detail'])->name('detail');
     Route::get('/analisis/{slug}/download', [AnalisisController::class, 'download'])->name('download_analisis');
@@ -54,7 +55,8 @@ Route::get('exam/{slug}', [ExamController::class, 'index'])->name('exam');
 Route::post('exam/{slug}', [ExamController::class, 'student_register'])->name('student-register');
 Route::get('exam/{slug}/finished', [ExamController::class, 'finished'])->name('finished-exam');
 
-Route::post('exam/{slug}/save-answer', [ExamController::class, 'save_answer'])->name('save_answer');
+Route::post('exam/{slug}/save-answer-multiple-choice', [ExamController::class, 'save_answer_multiple_choice'])->name('save_answer_multiple_choice');
+Route::post('exam/{slug}/save-answer-essay', [ExamController::class, 'save_answer_essay'])->name('save_answer_essay');
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

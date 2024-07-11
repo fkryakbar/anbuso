@@ -25,34 +25,63 @@ class AnalisisExport implements FromView, ShouldAutoSize
 
     public function view(): View
     {
-        $paketSoal = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $this->slug)->with('questions')->firstOrFail();
-        $students = Student::where('paket_soal_slug', $this->slug)->with(['answers' => function ($query) {
-            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+        $paketSoalMultipleChoice = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $this->slug)->with(['questions' => function ($query) {
+            $query->where('type', 'multiple_choice');
+        }])->firstOrFail();
+        $paketSoalEssay = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $this->slug)->with(['questions' => function ($query) {
+            $query->where('type', 'essay');
+        }])->firstOrFail();
+
+
+        $studentsMultipleChoice = Student::where('paket_soal_slug', $this->slug)->with(['answers' => function ($query) {
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'multiple_choice')
                 ->orderBy('questions.id', 'ASC')
                 ->select('answers.*');
         }])->get();
-
-        foreach ($students as $key => $student) {
-            $student->result = $student->result($this->slug);
-        }
-        $filteredStudents = [];
-        foreach ($students as $key => $student) {
-            if ($student->answers->count() == $paketSoal->questions->count()) {
-                array_push($filteredStudents, $student);
+        $filteredStudentsMultipleChoice = [];
+        foreach ($studentsMultipleChoice as $key => $student) {
+            if ($student->answers->count() == $paketSoalMultipleChoice->questions->count()) {
+                array_push($filteredStudentsMultipleChoice, $student);
             }
         }
 
-        $filteredStudents = collect($filteredStudents);
+        $filteredStudentsMultipleChoice = collect($filteredStudentsMultipleChoice);
+        $validityMultipleChoice = $this->validitas($filteredStudentsMultipleChoice);
+        $reliabilitasMultipleChoice = $this->reliabilitas($filteredStudentsMultipleChoice);
+        $tingkatKesulitanMultipleChoice = $this->tingkat_kesukaran($filteredStudentsMultipleChoice);
+        $dayaPembedaMultipleChoice = $this->daya_pembeda($filteredStudentsMultipleChoice);
 
-        $validity = $this->validitas($filteredStudents);
 
-        $reliabilitas = $this->reliabilitas($filteredStudents);
+        $studentsEssay = Student::where('paket_soal_slug', $this->slug)->with(['answers' => function ($query) {
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'essay')
+                ->orderBy('questions.id', 'ASC')
+                ->select('answers.*');
+        }])->get();
+        $filteredStudentsEssay = [];
+        foreach ($studentsEssay as $key => $student) {
+            if ($student->answers->count() == $paketSoalEssay->questions->count()) {
+                array_push($filteredStudentsEssay, $student);
+            }
+        }
 
-        $tingkatKesulitan = $this->tingkat_kesukaran($filteredStudents);
-
-        $dayaPembeda = $this->daya_pembeda($filteredStudents);
+        $filteredStudentsEssay = collect($filteredStudentsEssay);
+        $validityEssay = $this->validitas($filteredStudentsEssay);
+        $reliabilitasEssay = $this->reliabilitas($filteredStudentsEssay);
+        $tingkatKesulitanEssay = $this->tingkat_kesukaran($filteredStudentsEssay);
         // dd($dayaPembeda);
 
-        return view('template.analisis_export', compact('paketSoal', 'students', 'validity', 'filteredStudents', 'reliabilitas', 'tingkatKesulitan', 'dayaPembeda'));
+        return view('template.analisis_export', compact(
+            'paketSoalMultipleChoice',
+            'validityMultipleChoice',
+            'filteredStudentsMultipleChoice',
+            'reliabilitasMultipleChoice',
+            'tingkatKesulitanMultipleChoice',
+            'dayaPembedaMultipleChoice',
+            'paketSoalEssay',
+            'validityEssay',
+            'filteredStudentsEssay',
+            'reliabilitasEssay',
+            'tingkatKesulitanEssay',
+        ));
     }
 }

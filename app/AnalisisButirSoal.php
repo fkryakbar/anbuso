@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Answer;
+use App\Models\Question;
 use HiFolks\Statistics\Stat;
 
 trait AnalisisButirSoal
@@ -15,9 +16,7 @@ trait AnalisisButirSoal
             foreach ($students as $key => $student) {
                 $trueAnswers = 0;
                 foreach ($student->answers as $key => $answer) {
-                    if ($answer->result == 1) {
-                        $trueAnswers++;
-                    }
+                    $trueAnswers += $answer->score;
                 }
                 array_push($hasil, $trueAnswers);
                 foreach ($student->answers as $key => $answer) {
@@ -30,7 +29,7 @@ trait AnalisisButirSoal
             $container = $answers->map(function ($answer) {
                 $value = [];
                 foreach ($answer as $key => $ans) {
-                    array_push($value, $ans->result);
+                    array_push($value, $ans->score);
                 }
                 return $value;
             });
@@ -87,9 +86,7 @@ trait AnalisisButirSoal
             foreach ($students as $key => $student) {
                 $trueAnswers = 0;
                 foreach ($student->answers as $key => $answer) {
-                    if ($answer->result == 1) {
-                        $trueAnswers++;
-                    }
+                    $trueAnswers += $answer->score;
                 }
                 array_push($hasil, $trueAnswers);
                 foreach ($student->answers as $key => $answer) {
@@ -102,7 +99,7 @@ trait AnalisisButirSoal
             $container = $answers->map(function ($answer) {
                 $value = [];
                 foreach ($answer as $key => $ans) {
-                    array_push($value, $ans->result);
+                    array_push($value, $ans->score);
                 }
                 return $value;
             });
@@ -116,7 +113,11 @@ trait AnalisisButirSoal
             }
             $pvarsSum = $pvars->sum();
             $pvarsHasil = Stat::pvariance($hasil);
-            $rHitung = ($n / $n_1) * (1 - ($pvarsSum / $pvarsHasil));
+
+            $rHitung = 0;
+            if ($pvarsHasil != 0) {
+                $rHitung = ($n / $n_1) * (1 - ($pvarsSum / $pvarsHasil));
+            }
 
             $reliabilitas = false;
 
@@ -141,9 +142,7 @@ trait AnalisisButirSoal
             foreach ($students as $key => $student) {
                 $trueAnswers = 0;
                 foreach ($student->answers as $key => $answer) {
-                    if ($answer->result == 1) {
-                        $trueAnswers++;
-                    }
+                    $trueAnswers += $answer->score;
                 }
                 array_push($hasil, $trueAnswers);
                 foreach ($student->answers as $key => $answer) {
@@ -155,7 +154,7 @@ trait AnalisisButirSoal
             $container = $answers->map(function ($answer) {
                 $value = [];
                 foreach ($answer as $key => $ans) {
-                    array_push($value, $ans->result);
+                    array_push($value, $ans->score);
                 }
                 return $value;
             });
@@ -200,7 +199,7 @@ trait AnalisisButirSoal
     {
         if ($students->count() > 4 && $students->count() <= 30) {
             $students = $students->map(function ($student) {
-                $true = $student->answers->sum('result');
+                $true = $student->answers->sum('score');
                 $student = $student->setAttribute('trueAnswer', $true);
                 return $student;
             });
@@ -238,10 +237,10 @@ trait AnalisisButirSoal
             $lowerGroupAnswersAverage = [];
 
             foreach ($upperGroupAnswers as $key => $answer) {
-                $upperGroupAnswersAverage[$key] =  $answer->avg('result');
+                $upperGroupAnswersAverage[$key] =  $answer->avg('score');
             }
             foreach ($lowerGroupAnswers as $key => $answer) {
-                $lowerGroupAnswersAverage[$key] =  $answer->avg('result');
+                $lowerGroupAnswersAverage[$key] =  $answer->avg('score');
             }
             $dayaPembeda = [];
             foreach ($upperGroupAnswersAverage as $key => $upperAverage) {
@@ -297,8 +296,71 @@ trait AnalisisButirSoal
 
 
 
-    private function analyze()
+    private function tingkat_kesukaran_essay($students)
     {
+        // dd($students);
+        if ($students->count() > 4) {
+            $hasil = [];
+            $answers = [];
+            foreach ($students as $key => $student) {
+                $trueAnswers = 0;
+                foreach ($student->answers as $key => $answer) {
+                    $trueAnswers += $answer->score;
+                }
+                array_push($hasil, $trueAnswers);
+                foreach ($student->answers as $key => $answer) {
+                    array_push($answers, $answer);
+                }
+            }
+            $questionsBobot = collect([]);
+            $answers = collect($answers)->groupBy('question_slug');
+
+            $answers->each(function ($item, $key) use ($questionsBobot) {
+                $question = Question::where('slug', $key)->firstOrFail();
+                $questionsBobot->put($key, $question->format['bobot']);
+            });
+            // dd($questionsBobot);
+            $container = $answers->map(function ($answer) {
+                $value = [];
+                foreach ($answer as $key => $ans) {
+                    array_push($value, $ans->score);
+                }
+                return $value;
+            });
+
+            $averageScoreByQuestions = $container->map(function ($cons) {
+
+                return collect($cons)->avg();
+            });
+
+            $tingkat_kesukaran = [];
+
+
+            foreach ($averageScoreByQuestions as $key => $total) {
+                $tingkatValue = round($total / $questionsBobot->get($key), 4);
+
+                $tingkat = 'Sangat Mudah';
+
+                if ($tingkatValue < 0.20) {
+                    $tingkat = 'Sangat Sulit';
+                } else if ($tingkatValue < 0.40) {
+                    $tingkat = 'Sulit';
+                } else if ($tingkatValue < 0.60) {
+                    $tingkat = 'Sedang';
+                } else if ($tingkatValue < 0.90) {
+                    $tingkat = 'Mudah';
+                }
+
+
+                array_push($tingkat_kesukaran, [
+                    'question_slug' => $key,
+                    'value' => $tingkatValue,
+                    'category' => $tingkat
+                ]);
+            }
+            return $tingkat_kesukaran;
+        }
+        return null;
     }
     private $r_table = [
         1 => 0.9969,

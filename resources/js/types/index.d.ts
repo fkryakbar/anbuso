@@ -43,6 +43,7 @@ export interface Question {
         option_d?: string,
         option_e?: string,
         answer_key: string,
+        bobot?: number
     }
     created_at: string,
     updated_at: string,

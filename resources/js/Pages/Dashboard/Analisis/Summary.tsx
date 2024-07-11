@@ -10,7 +10,6 @@ import Echo from "laravel-echo";
 
 export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal, students: Student[] }) {
     const [penskoranData, setPenskoranData] = useState<Student[]>();
-    const [scoreDetailData, setScoreDetailData] = useState<{ multiple_choice?: Answer[], essay?: Answer[] } | null>(null);
 
     const deleteStudent = (u_id: string) => {
         Swal.fire({
@@ -63,7 +62,7 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
     useEffect(() => {
 
         setPenskoranData(students);
-    }, [])
+    }, [students])
 
 
     useEffect(() => {

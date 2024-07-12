@@ -20,11 +20,10 @@ export default function ScoreDetail({ answers, questions, id }: { answers: { mul
     // const [answersState, setAnwersState] = useState(answers);
 
     const updateScore = (answer_id: number | undefined, score: number | undefined, paket_soal_slug: string) => {
-        // console.log(answersState);
         axios.post(route('updateScore', { slug: paket_soal_slug }), { answer_id: answer_id, score: score })
             .then((res) => {
 
-                router.reload();
+                // router.reload();
 
             })
             .catch(err => {
@@ -124,7 +123,7 @@ export default function ScoreDetail({ answers, questions, id }: { answers: { mul
                                             </td>
                                             <td className="flex justify-center">
 
-                                                <div className="flex">
+                                                {/* <div className="flex">
                                                     <div className="flex items-center me-4">
                                                         <input defaultChecked={answers?.essay?.find(answer => answer.question_slug == question.slug)?.score == 0} onChange={e => updateScore(answers?.essay?.find(answer => answer.question_slug == question.slug)?.id, 0, question.paket_soal_slug)} id={`${question.slug}-1`} type="radio" value="" name={`${id}-${question.slug}`} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                                                         <label htmlFor={`${question.slug}-1`} className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">0</label>
@@ -149,7 +148,9 @@ export default function ScoreDetail({ answers, questions, id }: { answers: { mul
                                                         <input defaultChecked={answers?.essay?.find(answer => answer.question_slug == question.slug)?.score == 5} onChange={e => updateScore(answers?.essay?.find(answer => answer.question_slug == question.slug)?.id, 5, question.paket_soal_slug)} id={`${question.slug}-6`} type="radio" name={`${id}-${question.slug}`} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                                                         <label htmlFor={`${question.slug}-6`} className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">5</label>
                                                     </div>
-                                                </div>
+                                                </div> */}
+
+                                                <input type="number" max={question.format.bobot} defaultValue={answers?.essay?.find(answer => answer.question_slug == question.slug)?.score} className="input w-[100px] input-bordered" onBlur={(e) => updateScore(answers?.essay?.find(answer => answer.question_slug == question.slug)?.id, parseInt(e.target.value), question.paket_soal_slug)} />
 
                                                 {/* <input type="number" value={answers?.essay?.find(answer => answer.question_slug == question.slug)?.score} onChange={e => updateScore(answers?.essay?.find(answer => answer.question_slug == question.slug)?.id, parseInt(e.target.value), question.paket_soal_slug)} min={0} max={5} className="input input-bordered w-[70px]" /> */}
                                             </td>

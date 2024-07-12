@@ -15,7 +15,8 @@ export default function CreateSoalForm({ paketSoal }: { paketSoal: PaketSoal }) 
         option_c: '',
         option_d: '',
         option_e: '',
-        answer_key: 'a'
+        answer_key: 'a',
+        bobot: 10
     });
 
 
@@ -76,6 +77,12 @@ export default function CreateSoalForm({ paketSoal }: { paketSoal: PaketSoal }) 
                                 <InputError message={errors.answer_key} className="mt-2" />
                             </>
                         ) : null
+                    }
+                    {
+                        data.type == 'essay' ? (<>
+                            <TextInput type="number" placeholder="Bobot" className="mt-3" onChange={e => setData('bobot', parseInt(e.target.value))} value={data.bobot} disabled={processing} />
+
+                        </>) : null
                     }
                     {
                         progress ? (

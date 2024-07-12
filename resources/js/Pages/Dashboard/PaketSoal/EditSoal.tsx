@@ -17,7 +17,8 @@ export default function EditSoal({ paketSoal }: { paketSoal: PaketSoal }) {
         option_c: paketSoal.questions?.[0].format.option_c,
         option_d: paketSoal.questions?.[0].format.option_d,
         option_e: paketSoal.questions?.[0].format.option_e,
-        answer_key: paketSoal.questions?.[0].format.answer_key
+        answer_key: paketSoal.questions?.[0].format.answer_key,
+        bobot: paketSoal.questions?.[0].format.bobot,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -105,6 +106,12 @@ export default function EditSoal({ paketSoal }: { paketSoal: PaketSoal }) {
                                 <InputError message={errors.answer_key} className="mt-2" />
                             </>
                         ) : null
+                    }
+                    {
+                        data.type == 'essay' ? (<>
+                            <TextInput type="number" placeholder="Bobot" className="mt-3" onChange={e => setData('bobot', parseInt(e.target.value))} value={data.bobot} disabled={processing} />
+
+                        </>) : null
                     }
                     {
                         progress ? (

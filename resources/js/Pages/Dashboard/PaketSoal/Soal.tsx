@@ -130,7 +130,13 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                         <div key={index} className="mt-3 bg-white p-5 shadow rounded-md">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h1 className="text-2xl font-bold text-gray-600 flex items-center gap-3">Soal Nomor {index + 1} <span className="font-semibold text-xs p-1 rounded-md bg-green-200 text-green-800">{q.type == 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}</span></h1>
+                                    <h1 className="text-2xl font-bold text-gray-600 flex items-center gap-3">Soal Nomor {index + 1} <span className="font-semibold text-xs p-1 rounded-md bg-green-200 text-green-800">{q.type == 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}</span>
+                                        {
+                                            q.type == 'essay' ? (
+                                                <span className="font-semibold text-xs p-1 rounded-md bg-green-200 text-green-800">Bobot : {q.format.bobot}</span>
+                                            ) : null
+                                        }
+                                    </h1>
                                     <span className="text-xs text-gray-600">{timeFormat(q.created_at)}</span>
                                 </div>
                                 <div className="dropdown dropdown-end">

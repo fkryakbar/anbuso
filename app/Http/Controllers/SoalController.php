@@ -25,6 +25,7 @@ class SoalController extends Controller
         $request->validate([
             'content' => 'required',
             'type' => 'required',
+            'bobot' => 'nullable|numeric'
         ], [
             'content.required' => 'Konten Soal Wajib diisi',
             'type.required' => 'Tipe soal wajib dipilih'
@@ -43,7 +44,9 @@ class SoalController extends Controller
             ]);
         } else {
             $request->merge([
-                'format' => []
+                'format' => [
+                    'bobot' => (int)$request->bobot ?? 10
+                ]
             ]);
         }
 
@@ -53,7 +56,7 @@ class SoalController extends Controller
             'paket_soal_slug' => $paketSoal->slug,
         ]);
 
-        Question::create($request->except(['answer_key', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e']));
+        Question::create($request->except(['answer_key', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e', 'bobot']));
         return back();
     }
     public function delete($paket_soal_slug, $slug)
@@ -85,6 +88,7 @@ class SoalController extends Controller
             [
                 'content' => 'required',
                 'type' => 'required',
+                'bobot' => 'nullable|numeric'
             ],
             [
                 'content.required' => 'Konten Soal Wajib diisi',
@@ -105,12 +109,14 @@ class SoalController extends Controller
             ]);
         } else {
             $request->merge([
-                'format' => []
+                'format' => [
+                    'bobot' => (int)$request->bobot ?? 10,
+                ]
             ]);
         }
 
         $question = Question::where('slug', $slug)->where('paket_soal_slug', $paket_soal_slug)->where('user_id', Auth::user()->id)->firstOrFail();
-        $question->update($request->except(['answer_key', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e']));
+        $question->update($request->except(['answer_key', 'option_a', 'option_b', 'option_c', 'option_d', 'option_e', 'bobot']));
         return to_route('soal', [
             'slug' => $paket_soal_slug
         ]);

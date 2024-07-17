@@ -120,3 +120,9 @@ export interface DayaPembeda {
     middleGroupStudents?: Student[],
     upperGroupStudents: Student[],
 }
+
+export interface DayaPembedaEssay {
+    category: string,
+    value: number,
+    question_slug: string
+}

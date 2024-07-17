@@ -101,8 +101,9 @@ class AnalisisController extends Controller
         $validityEssay = $this->validitas($filteredStudentsEssay);
         $reliabilitasEssay = $this->reliabilitas($filteredStudentsEssay);
         $tingkatKesulitanEssay = $this->tingkat_kesukaran_essay($filteredStudentsEssay);
+        $dayaPembedaEssay = $this->daya_pembeda_essay($filteredStudentsEssay);
 
-        // dd($reliabilitasEssay);
+        // dd($dayaPembedaEssay);
 
 
 
@@ -118,6 +119,7 @@ class AnalisisController extends Controller
             'filteredStudentsEssay',
             'reliabilitasEssay',
             'tingkatKesulitanEssay',
+            'dayaPembedaEssay'
         ));
     }
 

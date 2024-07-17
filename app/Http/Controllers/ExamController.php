@@ -97,9 +97,10 @@ class ExamController extends Controller
             $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
                 $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
                     ->orderBy('questions.id', 'ASC')
-                    ->select('answers.*');
+                    ->select('answers.*', 'questions.type');
             }])->first();
             $student->result = $student->result($slug);
+            $student->groupedAnswer = $student->answers->groupBy('type');
             PenskoranEvent::dispatch($paketSoal->slug,  $student);
 
             return response([
@@ -144,9 +145,10 @@ class ExamController extends Controller
             $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
                 $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
                     ->orderBy('questions.id', 'ASC')
-                    ->select('answers.*');
+                    ->select('answers.*', 'questions.type');
             }])->first();
             $student->result = $student->result($slug);
+            $student->groupedAnswer = $student->answers->groupBy('type');
             PenskoranEvent::dispatch($paketSoal->slug,  $student);
 
             return response([

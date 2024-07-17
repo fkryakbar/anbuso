@@ -362,6 +362,37 @@ trait AnalisisButirSoal
         }
         return null;
     }
+
+    private function daya_pembeda_essay($students)
+    {
+        $tingkat_kesukaran = $this->tingkat_kesukaran_essay($students);
+
+        $dayaPembedaEssay = [];
+
+        foreach ($tingkat_kesukaran as $key => $question) {
+            $value = 1 - $question['value'];
+            $category = "";
+            $question_slug = $question['question_slug'];
+            if ($value < 0.2) {
+                $category = "Buruk";
+            } else if ($value < 0.3) {
+                $category = "Kurang Baik";
+            } else if ($value < 0.4) {
+                $category = "Cukup Baik";
+            } else if ($value < 1) {
+                $category = "Baik";
+            }
+
+            array_push($dayaPembedaEssay, [
+                'category' => $category,
+                'question_slug' => $question_slug,
+                'value' => round($value, 4)
+            ]);
+        }
+
+        return $dayaPembedaEssay;
+    }
+
     private $r_table = [
         1 => 0.9969,
         2 => 0.9500,

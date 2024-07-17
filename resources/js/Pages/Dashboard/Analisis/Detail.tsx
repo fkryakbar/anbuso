@@ -1,6 +1,6 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { timeFormat } from "@/helper/helper";
-import { DayaPembeda, PaketSoal, Reliability, Student, TingkatKesulitan, Validity } from "@/types";
+import { DayaPembeda, DayaPembedaEssay, PaketSoal, Reliability, Student, TingkatKesulitan, Validity } from "@/types";
 import { Head, Link, router } from "@inertiajs/react";
 import Interpretasi from "./Partials/Interpretasi";
 
@@ -16,6 +16,7 @@ export default function Summary({
     filteredStudentsEssay,
     reliabilitasEssay,
     tingkatKesulitanEssay,
+    dayaPembedaEssay
 }: {
     paketSoalMultipleChoice: PaketSoal,
     validityMultipleChoice: Validity | null,
@@ -28,6 +29,7 @@ export default function Summary({
     filteredStudentsEssay: Student[],
     reliabilitasEssay: Reliability | null,
     tingkatKesulitanEssay: TingkatKesulitan[] | null,
+    dayaPembedaEssay: DayaPembedaEssay[] | null
 
 }) {
 
@@ -504,6 +506,22 @@ export default function Summary({
                                             </td>
                                             {
                                                 tingkatKesulitanEssay?.map((t, i) => (
+                                                    <td key={i} className="text-center">
+                                                        <p className="font-semibold">
+                                                            {t.category}
+                                                        </p>
+                                                        <p>{t.value}</p>
+                                                    </td>
+                                                ))
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>
+                                                daya Pembeda
+                                            </td>
+                                            {
+                                                dayaPembedaEssay?.map((t, i) => (
                                                     <td key={i} className="text-center">
                                                         <p className="font-semibold">
                                                             {t.category}

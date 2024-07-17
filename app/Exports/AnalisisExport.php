@@ -68,6 +68,7 @@ class AnalisisExport implements FromView, ShouldAutoSize
         $validityEssay = $this->validitas($filteredStudentsEssay);
         $reliabilitasEssay = $this->reliabilitas($filteredStudentsEssay);
         $tingkatKesulitanEssay = $this->tingkat_kesukaran($filteredStudentsEssay);
+        $dayaPembedaEssay = $this->daya_pembeda_essay($filteredStudentsEssay);
         // dd($dayaPembeda);
 
         return view('template.analisis_export', compact(
@@ -82,6 +83,7 @@ class AnalisisExport implements FromView, ShouldAutoSize
             'filteredStudentsEssay',
             'reliabilitasEssay',
             'tingkatKesulitanEssay',
+            'dayaPembedaEssay'
         ));
     }
 }

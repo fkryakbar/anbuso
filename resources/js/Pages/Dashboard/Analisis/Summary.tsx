@@ -74,16 +74,14 @@ export default function Summary({ paketSoal, students }: { paketSoal: PaketSoal,
                     let updatedData = [...prevData];
 
                     const index = updatedData.findIndex(prev => prev.u_id === data.student.u_id);
-
-                    if (index !== -1) {
-                        updatedData[index] = data.student;
+                    if (index == -1) {
+                        updatedData.push(data.student)
                     } else {
-                        updatedData.push(data.student);
+                        updatedData[index] = data.student
                     }
-                    if (data.student.answers) {
-                        // setScoreDetailData(data.student.answers)
-                    }
-                    return updatedData;
+
+                    return updatedData
+
                 }
 
                 return prevData

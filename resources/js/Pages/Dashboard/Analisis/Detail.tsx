@@ -73,6 +73,11 @@ export default function Summary({
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="flex justify-between items-center  mt-4">
+                    <h1 className="text-gray-500 font-semibold text-xl">
+                        Analisis
+                    </h1>
                     <div>
                         <a href={route('download_analisis', { slug: paketSoalMultipleChoice.slug })} className="btn btn-sm bg-blue-500 hover:bg-blue-900 text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -82,9 +87,6 @@ export default function Summary({
                         </a>
                     </div>
                 </div>
-                <h1 className="text-gray-500 font-semibold text-xl mt-4">
-                    Analisis
-                </h1>
             </div>
             <div className="mt-5 justify-end flex">
                 <button onClick={() => {

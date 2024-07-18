@@ -14,6 +14,9 @@ use Illuminate\Support\Str;
 
 class ExamController extends Controller
 {
+
+    private $usePusher = false;
+
     public function index($slug)
     {
         $paketSoal = PaketSoal::where('slug', $slug)->with('questions')->firstOrFail();
@@ -93,15 +96,16 @@ class ExamController extends Controller
             } else {
                 $if_answer_exist = Answer::create($request->all());
             }
-
-            $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
-                $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
-                    ->orderBy('questions.id', 'ASC')
-                    ->select('answers.*', 'questions.type');
-            }])->first();
-            $student->result = $student->result($slug);
-            $student->groupedAnswer = $student->answers->groupBy('type');
-            PenskoranEvent::dispatch($paketSoal->slug,  $student);
+            if ($this->usePusher) {
+                $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
+                    $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+                        ->orderBy('questions.id', 'ASC')
+                        ->select('answers.*', 'questions.type');
+                }])->first();
+                $student->result = $student->result($slug);
+                $student->groupedAnswer = $student->answers->groupBy('type');
+                PenskoranEvent::dispatch($paketSoal->slug,  $student);
+            }
 
             return response([
                 'message' => 'Jawaban disimpan',
@@ -141,15 +145,16 @@ class ExamController extends Controller
             } else {
                 $if_answer_exist = Answer::create($request->all());
             }
-
-            $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
-                $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
-                    ->orderBy('questions.id', 'ASC')
-                    ->select('answers.*', 'questions.type');
-            }])->first();
-            $student->result = $student->result($slug);
-            $student->groupedAnswer = $student->answers->groupBy('type');
-            PenskoranEvent::dispatch($paketSoal->slug,  $student);
+            if ($this->usePusher) {
+                $student = Student::where('paket_soal_slug', $slug)->where('u_id', $request->u_id)->with(['answers' => function ($query) {
+                    $query->join('questions', 'answers.question_slug', '=', 'questions.slug')
+                        ->orderBy('questions.id', 'ASC')
+                        ->select('answers.*', 'questions.type');
+                }])->first();
+                $student->result = $student->result($slug);
+                $student->groupedAnswer = $student->answers->groupBy('type');
+                PenskoranEvent::dispatch($paketSoal->slug,  $student);
+            }
 
             return response([
                 'message' => 'Jawaban disimpan',

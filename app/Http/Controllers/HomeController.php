@@ -11,4 +11,9 @@ class HomeController extends Controller
     {
         return Inertia::render('Home/Index');
     }
+
+    public function tentang()
+    {
+        return Inertia::render('Home/Tentang');
+    }
 }

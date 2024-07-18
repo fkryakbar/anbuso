@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SoalImport;
 use App\Models\PaketSoal;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
 class SoalController extends Controller
 {
@@ -120,5 +123,19 @@ class SoalController extends Controller
         return to_route('soal', [
             'slug' => $paket_soal_slug
         ]);
+    }
+
+    public function upload(Request $request, $slug)
+    {
+        // validate file for excel
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ], [
+            'file.required' => 'File wajib diupload',
+        ]);
+
+        Excel::import(new SoalImport($slug), $request->file('file'));
+
+        return back();
     }
 }

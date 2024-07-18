@@ -20,20 +20,22 @@ class SoalMultipleChoiceImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        return new Question([
-            'slug' => Str::random(5) . '-' . Str::random(5) . '-' . Str::random(5),
-            'user_id' => Auth::user()->id,
-            'paket_soal_slug' => $this->paket_soal_slug,
-            'content' => $row['Konten'],
-            'type' => 'multiple_choice',
-            'format' => [
-                'option_a' => $row['A'],
-                'option_b' => $row['B'],
-                'option_c' => $row['C'],
-                'option_d' => $row['D'],
-                'option_e' => $row['E'],
-                'answer_key' => $row['Kunci Kawaban'],
-            ]
-        ]);
+        if ($row['konten']) {
+            return new Question([
+                'slug' => Str::random(5) . '-' . Str::random(5) . '-' . Str::random(5),
+                'user_id' => Auth::user()->id,
+                'paket_soal_slug' => $this->paket_soal_slug,
+                'content' => $row['konten'],
+                'type' => 'multiple_choice',
+                'format' => [
+                    'option_a' => $row['a'],
+                    'option_b' => $row['b'],
+                    'option_c' => $row['c'],
+                    'option_d' => $row['d'],
+                    'option_e' => $row['e'],
+                    'answer_key' => in_array(strtolower($row['kunci_jawaban']), ['a', 'b', 'c', 'd', 'e']) ? strtolower($row['kunci_jawaban']) : 'a',
+                ]
+            ]);
+        }
     }
 }

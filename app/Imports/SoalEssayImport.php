@@ -21,15 +21,17 @@ class SoalEssayImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        return new Question([
-            'slug' => Str::random(5) . '-' . Str::random(5) . '-' . Str::random(5),
-            'user_id' => Auth::user()->id,
-            'paket_soal_slug' => $this->paket_soal_slug,
-            'content' => $row['Konten'],
-            'type' => 'essay',
-            'format' => [
-                'bobot' => (int)$row['Bobot'] ?? 10
-            ]
-        ]);
+        if ($row['konten']) {
+            return new Question([
+                'slug' => Str::random(5) . '-' . Str::random(5) . '-' . Str::random(5),
+                'user_id' => Auth::user()->id,
+                'paket_soal_slug' => $this->paket_soal_slug,
+                'content' => $row['konten'],
+                'type' => 'essay',
+                'format' => [
+                    'bobot' => (int)$row['bobot'] ?? 10
+                ]
+            ]);
+        }
     }
 }

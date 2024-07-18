@@ -20,6 +20,7 @@ if (env('APP_ENV') === 'production') {
 }
 
 Route::get('/', [HomeController::class, 'index']);
+Route::get('tentang', [HomeController::class, 'tentang'])->name('tentang');
 
 Route::get('register', [RegisterController::class, 'index'])->name('register');
 Route::post('register', [RegisterController::class, 'store']);
@@ -36,6 +37,7 @@ Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function
     Route::get('/paket-soal/{slug}', [SoalController::class, 'index'])->name('soal');
     Route::post('/paket-soal/{slug}', [PaketSoalController::class, 'update'])->name('update-paket-soal');
     Route::post('/paket-soal/{slug}/create', [SoalController::class, 'create'])->name('create-question');
+    Route::post('/paket-soal/{slug}/upload', [SoalController::class, 'upload'])->name('upload-question');
     Route::get('/paket-soal/{slug}/delete', [PaketSoalController::class, 'delete']);
     Route::get('/paket-soal/{paket_soal_slug}/{slug}', [SoalController::class, 'edit'])->name('edit-soal-page');
     Route::post('/paket-soal/{paket_soal_slug}/{slug}', [SoalController::class, 'update'])->name('update-soal');

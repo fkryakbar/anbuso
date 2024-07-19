@@ -2,6 +2,7 @@ import DashboardLayout from "@/Layouts/DashboardLayout";
 import { timeFormat } from "@/helper/helper";
 import { PaketSoal } from "@/types";
 import { Head, Link } from "@inertiajs/react";
+import UploadAnalisisForm from "./Partials/UploadAnalisisForm";
 
 export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
 
@@ -24,12 +25,12 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                 <h1 className="text-gray-500 font-semibold text-xl">
                     Analisis
                 </h1>
-                {/* <button
+                <button
                     className="btn text-white hover:bg-blue-800 bg-blue-500"
                     onClick={() =>
                         (
                             document.getElementById(
-                                "create"
+                                "upload"
                             ) as HTMLDialogElement
                         ).showModal()
                     }
@@ -48,9 +49,9 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal[] }) {
                             d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                         />
                     </svg>
-                    Buat
-                </button> */}
-                {/* <CreateForm /> */}
+                    Upload Jawaban
+                </button>
+                <UploadAnalisisForm />
             </div>
             <div className="flex flex-col gap-3 mt-5">
                 {

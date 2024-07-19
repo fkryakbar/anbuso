@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\AnalisisButirSoal;
 use App\Exports\AnalisisExport;
+use App\Imports\JawabanImport;
 use App\Models\Answer;
 use App\Models\PaketSoal;
 use App\Models\Question;
 use App\Models\Student;
-
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -139,5 +140,67 @@ class AnalisisController extends Controller
         PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->firstOrFail();
 
         return Excel::download(new AnalisisExport($slug), 'Analisis.xlsx');
+    }
+
+    public function upload(Request $request)
+    {
+        // validate title and file for excel 
+        $request->validate([
+            'title' => 'required|max:50|string',
+            'file' => 'required|mimes:xls,xlsx',
+            'multiple_choice_total' => 'required|numeric',
+            'essay_total' => 'required|numeric'
+        ], [
+            'title.required' => 'Judul wajib diisi',
+            'file.required' => 'File wajib diupload',
+            'file.mimes' => 'File harus berupa xls atau xlsx',
+            'multiple_choice_total.required' => 'Total soal pilihan ganda wajib diisi',
+            'multiple_choice_total.numeric' => 'Total soal pilihan ganda harus berupa angka',
+            'essay_total.required' => 'Total soal esai wajib diisi',
+            'essay_total.numeric' => 'Total soal esai harus berupa angka'
+        ]);
+
+
+        $userId = Auth::user()->id;
+        $paketSoalSlug = Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4);
+        $paketSoal = PaketSoal::create([
+            'title' => $request->title,
+            'slug' => $paketSoalSlug,
+            'user_id' => $userId,
+            'accept_responses' => false,
+        ]);
+
+        for ($i = 0; $i < $request->multiple_choice_total; $i++) {
+            Question::create([
+                'slug' => Str::random(5) . '-' . Str::random(5) . '-' . Str::random(5),
+                'user_id' => $userId,
+                'paket_soal_slug' => $paketSoalSlug,
+                'type' => 'multiple_choice',
+                'content' => 'Pertanyaan Pilihan Ganda Nomor ' . ($i + 1),
+                'format' => [
+                    'option_a' => 'A',
+                    'option_b' => 'B',
+                    'option_c' => 'C',
+                    'option_d' => 'D',
+                    'option_e' => 'E',
+                    'answer_key' => 'a',
+                ]
+            ]);
+        }
+
+        for ($j = 0; $j < $request->essay_total; $j++) {
+            Question::create([
+                'slug' => Str::random(5) . '-' . Str::random(5) . '-' . Str::random(5),
+                'user_id' => $userId,
+                'paket_soal_slug' => $paketSoalSlug,
+                'type' => 'essay',
+                'content' => 'Pertanyaan Esai Nomor ' . ($j + 1),
+                'format' => [
+                    'bobot' => 10
+                ]
+            ]);
+        }
+
+        Excel::import(new JawabanImport($paketSoalSlug), $request->file('file'));
     }
 }

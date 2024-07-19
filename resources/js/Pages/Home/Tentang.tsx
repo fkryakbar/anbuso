@@ -12,7 +12,7 @@ export default function Tentang({ auth, laravelVersion, phpVersion }: PageProps<
                 <Head title="Tentang" />
                 <section className=' pt-[120px]  -mb-[5px]'>
                     <div className='max-w-[1200px] mx-auto gap-5 flex lg:flex-row flex-col items-center'>
-                        <div className='basis-[40%] lg:p-8 p-4 m-4 shadow-lg rounded-lg border-[1px]'>
+                        <div className='basis-[60%] lg:p-8 p-4 m-4 shadow-lg rounded-lg border-[1px]'>
                             <div className="flex gap-3">
                                 <div className="w-5 h-5 rounded-full bg-blue-700" />
                                 <div className="w-5 h-5 rounded-full bg-amber-400" />
@@ -42,7 +42,7 @@ export default function Tentang({ auth, laravelVersion, phpVersion }: PageProps<
                                 <li className='text-black'>Devia Handayani</li>
                             </ol>
                         </div>
-                        <div className='basis-[60%]'>
+                        <div className='basis-[40%]'>
                             <img src="/static/about.svg" alt="about" className='w-full' />
                         </div>
                     </div>

@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth.teacher', 'prefix' => 'dashboard'], function
     Route::get('/paket-soal/{paket_soal_slug}/{slug}/delete', [SoalController::class, 'delete'])->name('delete-question');
 
     Route::get('/analisis', [AnalisisController::class, 'index'])->name('analisis');
+    Route::post('/analisis/upload', [AnalisisController::class, 'upload'])->name('analisis.upload');
     Route::get('/analisis/{slug}/summary', [AnalisisController::class, 'summary'])->name('summary');
     Route::post('/analisis/{slug}/summary', [AnalisisController::class, 'updateScore'])->name('updateScore');
     Route::delete('/analisis/{slug}/{u_id}/summary', [AnalisisController::class, 'delete_student'])->name('delete_student');

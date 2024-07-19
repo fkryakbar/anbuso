@@ -132,6 +132,7 @@ class SoalController extends Controller
             'file' => 'required|mimes:xls,xlsx'
         ], [
             'file.required' => 'File wajib diupload',
+            'file.mimes' => 'File harus berupa xls atau xlsx',
         ]);
 
         Excel::import(new SoalImport($slug), $request->file('file'));

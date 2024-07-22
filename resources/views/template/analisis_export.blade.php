@@ -145,9 +145,9 @@
             </tr>
             <tr>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
-                    {{ $reliabilitasMultipleChoice['rHitung'] }}</th>
-                <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                     {{ $reliabilitasMultipleChoice['rTable'] }}</th>
+                <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
+                    {{ $reliabilitasMultipleChoice['rHitung'] }}</th>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                     @if ($reliabilitasMultipleChoice['reliabilitas'])
                         Reliabel
@@ -366,9 +366,9 @@
             </tr>
             <tr>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
-                    {{ $reliabilitasEssay['rHitung'] }}</th>
-                <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                     {{ $reliabilitasEssay['rTable'] }}</th>
+                <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
+                    {{ $reliabilitasEssay['rHitung'] }}</th>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                     @if ($reliabilitasEssay['reliabilitas'])
                         Reliabel

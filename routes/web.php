@@ -60,8 +60,3 @@ Route::get('exam/{slug}/finished', [ExamController::class, 'finished'])->name('f
 
 Route::post('exam/{slug}/save-answer-multiple-choice', [ExamController::class, 'save_answer_multiple_choice'])->name('save_answer_multiple_choice');
 Route::post('exam/{slug}/save-answer-essay', [ExamController::class, 'save_answer_essay'])->name('save_answer_essay');
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });

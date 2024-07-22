@@ -13,7 +13,7 @@ function getInitials(fullName: string) {
 }
 
 
-export default function Authenticated({ children }: PropsWithChildren) {
+export default function Authenticated({ children }: { children: ReactNode }) {
     const pageData = usePage();
     const { user } = pageData.props.auth as { user: User };
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);

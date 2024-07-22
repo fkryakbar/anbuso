@@ -57,7 +57,7 @@ trait AnalisisButirSoal
 
                 array_push($questionsValidity, [
                     'questionSlug' => $key,
-                    'correlationValue' => $correlation_value,
+                    'correlationValue' => number_format($correlation_value, 4),
                     'validity' => $validity,
                     'trueAnswerTotalByQuestion' => $sumTrueAnswer
                 ]);
@@ -246,7 +246,7 @@ trait AnalisisButirSoal
             foreach ($upperGroupAnswersAverage as $key => $upperAverage) {
                 $lowerAverage = $lowerGroupAnswersAverage[$key];
                 $value =  ($upperAverage - $lowerAverage) / 1;
-                $dayaPembeda[$key] = $value;
+                $dayaPembeda[$key] = number_format($value, 2);
             }
             $upperGroupArray = [];
             $lowerGroupArray = [];
@@ -276,7 +276,7 @@ trait AnalisisButirSoal
                 if ($value <= 0.19) {
                     $category = 'Kurang Baik';
                 } else if ($value <= 0.29) {
-                    $category = 'Cukup, Perlu Perbaikan';
+                    $category = 'Cukup';
                 } else if ($value <= 0.39) {
                     $category = 'Baik';
                 }

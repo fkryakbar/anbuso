@@ -278,11 +278,7 @@
                     <td style="border: 1px solid rgb(133, 133, 133);">{{ $student->name }}</td>
                     @foreach ($student->answers as $key => $answer)
                         <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">
-                            @if ($answer->score == 1)
-                                1
-                            @else
-                                0
-                            @endif
+                            {{ $answer->score }}
                         </th>
                     @endforeach
                     <td style="border: 1px solid rgb(133, 133, 133);">

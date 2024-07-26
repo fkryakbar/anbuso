@@ -192,7 +192,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="a" />
                                             <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'a' ? 'bg-green-400' : ''}`} htmlFor="a">
-                                                A. {q.format.option_a}
+                                                A. <Latex>{q.format.option_a}</Latex>
                                             </label>
                                             <br />
                                         </div>
@@ -203,7 +203,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="b" />
                                             <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'b' ? 'bg-green-400' : ''}`} htmlFor="b">
-                                                B. {q.format.option_b}
+                                                B. <Latex>{q.format.option_b}</Latex>
                                             </label>
                                             <br />
                                         </div>
@@ -214,7 +214,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="c" />
                                             <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'c' ? 'bg-green-400' : ''}`} htmlFor="c">
-                                                C. {q.format.option_c}
+                                                C. <Latex>{q.format.option_c}</Latex>
                                             </label>
                                             <br />
                                         </div>
@@ -225,7 +225,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="d" />
                                             <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'd' ? 'bg-green-400' : ''}`} htmlFor="d">
-                                                D. {q.format.option_d}
+                                                D. <Latex>{q.format.option_d}</Latex>
                                             </label>
                                             <br />
                                         </div>
@@ -236,7 +236,7 @@ export default function Index({ paketSoal }: { paketSoal: PaketSoal }) {
                                         <div className="flex mb-4">
                                             <input type="radio" className="peer/answer hidden h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" defaultValue="e" />
                                             <label className={`text-sm font-medium text-gray-900 ml-2 block w-full py-3 px-2 rounded-md border-[1px] ${q.format.answer_key == 'e' ? 'bg-green-400' : ''}`} htmlFor="e">
-                                                E. {q.format.option_e}
+                                                E. <Latex>{q.format.option_e}</Latex>
                                             </label>
                                             <br />
                                         </div>

@@ -1,6 +1,6 @@
 import { PaketSoal, Question, Student } from "@/types";
 import { Link } from "@inertiajs/react";
-import { PropsWithChildren, ReactNode, useState } from "react";
+import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
 
 interface ExamLayout {
     children: ReactNode | undefined,
@@ -16,6 +16,11 @@ interface ExamLayout {
 
 export default function GuestExamLayout({ children, paketSoal, nextQuestion, prevQuestion, questionIndex, questionTotal, student, changeQuestion, questions }: ExamLayout) {
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+
+    useEffect(() => {
+        (document.getElementById('help') as HTMLDialogElement).showModal()
+    }, [])
+
     return (
         <div className='bg-gray-100 min-h-screen'>
             <nav className='bg-white p-3 px-5 flex items-center shadow-md'>
@@ -41,8 +46,52 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                             </h1>
                         </div>
                     </div>
+                    <div>
+                        <button className="btn bg-white shadow-none border-none" onClick={() => (document.getElementById('help') as HTMLDialogElement).showModal()}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </nav>
+
+            <dialog id="help" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg">Panduan Penggunaan Aplikasi Ujian</h3>
+                    <div className="ml-4 mt-5">
+                        <h1 className="font-semibold text-md">Pilihan Ganda</h1>
+                        <ul className="list-disc ml-5">
+                            <li>Baca setiap pertanyaan dengan seksama.</li>
+                            <li>Pilih salah satu jawaban yang menurut Anda benar dengan mengklik pada opsi yang tersedia.</li>
+                            <li>Anda dapat menggunakan tombol 'Berikutnya' dan 'Sebelumnya' untuk berpindah antar soal atau dengan mengklik nomor soal dibagian navigasi</li>
+                            <li>Nomor soal dibagian navigasi akan berwarna biru jika soal sudah dijawab.</li>
+                        </ul>
+                        <h1 className="font-semibold text-md">Esai</h1>
+                        <ul className="list-disc ml-5">
+                            <li>Baca setiap pertanyaan esai dengan teliti.</li>
+                            <li>Tulis jawaban Anda di kotak teks yang disediakan. Pastikan jawaban Anda lengkap dan jelas.</li>
+                            <li>Anda dapat menggunakan tombol 'Berikutnya' dan 'Sebelumnya' untuk berpindah antar soal atau dengan mengklik nomor soal dibagian navigasi</li>
+                            <li>Nomor soal dibagian navigasi akan berwarna biru jika soal sudah dijawab.</li>
+                        </ul>
+                        <h1 className="font-semibold text-md">Mengakhiri Ujian</h1>
+                        <ul className="list-disc ml-5">
+                            <li>Sebelum mengakhiri ujian, pastikan Anda telah menjawab semua soal. Anda dapat meninjau kembali jawaban yang telah Anda berikan.</li>
+                            <li>Pergi ke nomor soal terakhir kemudian klik selanjutnya untuk mengakhiri ujian.</li>
+                            <li>Ujian hanya bisa diakhiri jika soal sudah terjawab semua.</li>
+                            <li>Setelah selesai maka anda akan diarahkan ke halaman hasil.</li>
+                        </ul>
+                    </div>
+                    <form method="dialog">
+                        <button className="btn w-full mt-5 bg-blue-500 hover:bg-blue-700 text-white">
+                            Lanjutkan
+                        </button>
+                    </form>
+                </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
             <div className='flex'>
                 <aside className={`bg-white min-h-screen shadow-md fixed top-0 ${isSideBarOpen ? 'left-0' : 'left-[-250px]'} w-[250px] pt-5 transition-all lg:hidden z-20`}>
                     <div className='flex ml-5 items-center justify-between mr-5 mb-5'>

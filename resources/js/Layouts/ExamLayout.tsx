@@ -18,7 +18,13 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
     useEffect(() => {
-        (document.getElementById('help') as HTMLDialogElement).showModal()
+        (document.getElementById('help') as HTMLDialogElement).showModal();
+        (document.getElementById('help') as HTMLDialogElement).addEventListener('show', function () {
+            (document.getElementById('hidden-focus') as HTMLInputElement).focus();
+        });
+
+
+
     }, [])
 
     return (
@@ -38,7 +44,7 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                         </h1>
                         <p className="text-xs font-semibold text-gray-600">Computer Based Test</p>
                     </div>
-                    <div className="basis-[85%] flex lg:justify-center justify-end items-center">
+                    <div className="basis-[85%] flex lg:justify-center justify-evenly items-center">
                         <div className="text-center text-gray-600">
                             <p className="text-xs">Nomor Soal</p>
                             <h1 className="font-bold text-sm">
@@ -59,6 +65,7 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
             <dialog id="help" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Panduan Penggunaan Aplikasi Ujian</h3>
+                    <input type="text" id="hidden-focus" style={{ position: 'absolute', opacity: 0, height: 0, width: 0 }} />
                     <div className="ml-4 mt-5">
                         <h1 className="font-semibold text-md">Pilihan Ganda</h1>
                         <ul className="list-disc ml-5">

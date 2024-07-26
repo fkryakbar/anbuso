@@ -4,6 +4,7 @@ import { DayaPembeda, DayaPembedaEssay, PaketSoal, Reliability, Student, Tingkat
 import { Head, Link, router } from "@inertiajs/react";
 import Interpretasi from "./Partials/Interpretasi";
 import { useEffect, useRef, useState } from "react";
+import Filter from "./Partials/Filter";
 
 export default function Summary({
     paketSoalMultipleChoice,
@@ -35,7 +36,6 @@ export default function Summary({
 }) {
     const divRef = useRef<HTMLDivElement>(null);
     const [divWidth, setDivWidth] = useState(0);
-    console.log(divWidth);
 
     useEffect(() => {
         if (divRef.current) {
@@ -98,7 +98,8 @@ export default function Summary({
                     </div>
                 </div>
             </div>
-            <div className="mt-5 justify-end flex">
+            <div className="mt-5 justify-end flex gap-3">
+                <Filter paketSoalEssay={paketSoalEssay} paketSoalMultipleChoice={paketSoalMultipleChoice} />
                 <button onClick={() => {
                     router.reload({
                         only: ['students']

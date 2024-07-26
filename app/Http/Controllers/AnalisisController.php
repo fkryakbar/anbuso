@@ -57,7 +57,7 @@ class AnalisisController extends Controller
         return  to_route('summary', ['slug' => $slug]);
     }
 
-    public function detail($slug)
+    public function detail($slug, Request $request)
     {
         $paketSoalMultipleChoice = PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->with(['questions' => function ($query) {
             $query->where('type', 'multiple_choice');
@@ -66,6 +66,7 @@ class AnalisisController extends Controller
             $query->where('type', 'essay');
         }])->firstOrFail();
 
+        dd($request->essay);
 
         $studentsMultipleChoice = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
             $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'multiple_choice')

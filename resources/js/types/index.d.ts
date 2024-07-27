@@ -29,7 +29,7 @@ export interface PaketSoal {
 }
 
 export interface Question {
-    id: BigInteger,
+    id: number,
     slug: string,
     user_id: BigInteger,
     paket_soal_slug: string,

@@ -2,10 +2,10 @@ import { PaketSoal } from "@/types";
 import { router } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Filter({ paketSoalMultipleChoice, paketSoalEssay }: { paketSoalMultipleChoice: PaketSoal, paketSoalEssay: PaketSoal }) {
-    const [multipleChoiceChecked, setMultipleChoiceChecked] = useState<number[]>([]);
-    const [essayChecked, setEssayChecked] = useState<number[]>([]);
-
+export default function Filter({ paketSoalMultipleChoice, paketSoalEssay, multipleChoiceQuestionsId, essayQuestionsId }: { paketSoalMultipleChoice: PaketSoal, paketSoalEssay: PaketSoal, essayQuestionsId: number[], multipleChoiceQuestionsId: number[] }) {
+    const [multipleChoiceChecked, setMultipleChoiceChecked] = useState<number[]>(multipleChoiceQuestionsId);
+    const [essayChecked, setEssayChecked] = useState<number[]>(essayQuestionsId);
+    const [isError, setIsError] = useState(false);
     const handleMultipleChoiceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         setMultipleChoiceChecked(prev =>
@@ -21,12 +21,20 @@ export default function Filter({ paketSoalMultipleChoice, paketSoalEssay }: { pa
     };
 
     const handleSave = () => {
+        setIsError(false);
         const params = new URLSearchParams();
         multipleChoiceChecked.forEach(value => params.append('multipleChoice[]', value.toString()));
         essayChecked.forEach(value => params.append('essay[]', value.toString()));
 
-        const url = route('detail', { slug: paketSoalMultipleChoice.slug }) + '?' + params.toString();
-        console.log(url);
+        let url = route('detail', { slug: paketSoalMultipleChoice.slug }) + '?' + params.toString();
+        if (multipleChoiceChecked.length == paketSoalMultipleChoice.questions?.length && essayChecked.length == paketSoalEssay.questions?.length) {
+            url = route('detail', { slug: paketSoalMultipleChoice.slug })
+        }
+        if (multipleChoiceChecked.length > 1 && essayChecked.length > 1) {
+            router.visit(url);
+        } else {
+            setIsError(true);
+        }
 
 
     };
@@ -39,7 +47,25 @@ export default function Filter({ paketSoalMultipleChoice, paketSoalEssay }: { pa
         </button>
         <dialog id="filter" className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg">Pilih soal yang ingin dianalisis</h3>
+                <h3 className="font-bold text-lg my-3">Pilih soal yang ingin dianalisis</h3>
+                {
+                    isError ? (
+                        <div role="alert" className="alert alert-error">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6 shrink-0 stroke-current"
+                                fill="none"
+                                viewBox="0 0 24 24">
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Minimal Soal yang dipilih adalah 2</span>
+                        </div>
+                    ) : null
+                }
                 <p className="font-semibold mt-2">Plihan Ganda</p>
                 {
                     paketSoalMultipleChoice.questions && paketSoalMultipleChoice.questions.length > 0 ? (
@@ -47,7 +73,7 @@ export default function Filter({ paketSoalMultipleChoice, paketSoalEssay }: { pa
                             <div className="form-control" key={i}>
                                 <label className="label cursor-pointer">
                                     <span className="label-text">Soal Nomor {i + 1}</span>
-                                    <input type="checkbox" value={i + 1} name="multipleChoice" onChange={handleMultipleChoiceChange} className="checkbox" />
+                                    <input type="checkbox" value={q.id.toString()} checked={multipleChoiceChecked.includes(q.id)} name="multipleChoice" onChange={handleMultipleChoiceChange} className="checkbox" />
                                 </label>
                             </div>
                         ))
@@ -61,7 +87,7 @@ export default function Filter({ paketSoalMultipleChoice, paketSoalEssay }: { pa
                             <div className="form-control" key={i}>
                                 <label className="label cursor-pointer">
                                     <span className="label-text">Soal Nomor {i + 1}</span>
-                                    <input type="checkbox" value={i + 1} name="essay" onChange={handleEssayChange} className="checkbox" />
+                                    <input type="checkbox" value={q.id.toString()} checked={essayChecked.includes(q.id)} name="essay" onChange={handleEssayChange} className="checkbox" />
                                 </label>
                             </div>
                         ))

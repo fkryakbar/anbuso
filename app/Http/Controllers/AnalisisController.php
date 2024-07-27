@@ -66,16 +66,23 @@ class AnalisisController extends Controller
             $query->where('type', 'essay');
         }])->firstOrFail();
 
-        dd($request->essay);
 
-        $studentsMultipleChoice = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
-            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'multiple_choice')
+        $multipleChoiceQuestionsId = Question::where('paket_soal_slug', $slug)->where('type', 'multiple_choice')->get()->pluck('id');
+        if ($request->multipleChoice) {
+            $multipleChoiceQuestionsId = collect($request->multipleChoice)->map(function ($item) {
+                return (int) $item;
+            });
+        }
+
+        $studentsMultipleChoice = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) use ($multipleChoiceQuestionsId) {
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'multiple_choice')->whereIn('questions.id', $multipleChoiceQuestionsId)
                 ->orderBy('questions.id', 'ASC')
                 ->select('answers.*');
         }])->get();
+
         $filteredStudentsMultipleChoice = [];
         foreach ($studentsMultipleChoice as $key => $student) {
-            if ($student->answers->count() == $paketSoalMultipleChoice->questions->count()) {
+            if ($student->answers->count() == $paketSoalMultipleChoice->questions->count() || $student->answers->count() == $multipleChoiceQuestionsId->count()) {
                 array_push($filteredStudentsMultipleChoice, $student);
             }
         }
@@ -87,14 +94,24 @@ class AnalisisController extends Controller
         $dayaPembedaMultipleChoice = $this->daya_pembeda($filteredStudentsMultipleChoice);
 
 
-        $studentsEssay = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) {
-            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'essay')
+
+        $essayQuestionsId = Question::where('paket_soal_slug', $slug)->where('type', 'essay')->get()->pluck('id');
+        if ($request->essay) {
+            $essayQuestionsId = collect($request->essay)->map(function ($item) {
+                return (int) $item;
+            });
+        }
+        $studentsEssay = Student::where('paket_soal_slug', $slug)->with(['answers' => function ($query) use ($essayQuestionsId) {
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'essay')->whereIn('questions.id', $essayQuestionsId)
                 ->orderBy('questions.id', 'ASC')
                 ->select('answers.*');
         }])->get();
+
+
+
         $filteredStudentsEssay = [];
         foreach ($studentsEssay as $key => $student) {
-            if ($student->answers->count() == $paketSoalEssay->questions->count()) {
+            if ($student->answers->count() == $paketSoalEssay->questions->count() || $student->answers->count() == $essayQuestionsId->count()) {
                 array_push($filteredStudentsEssay, $student);
             }
         }
@@ -121,7 +138,9 @@ class AnalisisController extends Controller
             'filteredStudentsEssay',
             'reliabilitasEssay',
             'tingkatKesulitanEssay',
-            'dayaPembedaEssay'
+            'dayaPembedaEssay',
+            'essayQuestionsId',
+            'multipleChoiceQuestionsId'
         ));
     }
 

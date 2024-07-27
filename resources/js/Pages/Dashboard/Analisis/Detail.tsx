@@ -18,7 +18,9 @@ export default function Summary({
     filteredStudentsEssay,
     reliabilitasEssay,
     tingkatKesulitanEssay,
-    dayaPembedaEssay
+    dayaPembedaEssay,
+    multipleChoiceQuestionsId,
+    essayQuestionsId
 }: {
     paketSoalMultipleChoice: PaketSoal,
     validityMultipleChoice: Validity | null,
@@ -31,7 +33,9 @@ export default function Summary({
     filteredStudentsEssay: Student[],
     reliabilitasEssay: Reliability | null,
     tingkatKesulitanEssay: TingkatKesulitan[] | null,
-    dayaPembedaEssay: DayaPembedaEssay[] | null
+    dayaPembedaEssay: DayaPembedaEssay[] | null,
+    essayQuestionsId: number[],
+    multipleChoiceQuestionsId: number[],
 
 }) {
     const divRef = useRef<HTMLDivElement>(null);
@@ -99,7 +103,7 @@ export default function Summary({
                 </div>
             </div>
             <div className="mt-5 justify-end flex gap-3">
-                <Filter paketSoalEssay={paketSoalEssay} paketSoalMultipleChoice={paketSoalMultipleChoice} />
+                <Filter paketSoalEssay={paketSoalEssay} paketSoalMultipleChoice={paketSoalMultipleChoice} multipleChoiceQuestionsId={multipleChoiceQuestionsId} essayQuestionsId={essayQuestionsId} />
                 <button onClick={() => {
                     router.reload({
                         only: ['students']
@@ -172,7 +176,9 @@ export default function Summary({
                                                 {
                                                     paketSoalMultipleChoice.questions && paketSoalMultipleChoice.questions.length > 0 ? (
                                                         paketSoalMultipleChoice.questions.map((q, i) => (
-                                                            <th className="text-center text-black text-lg" key={i}>{i + 1}</th>
+                                                            multipleChoiceQuestionsId.includes(q.id) ? (
+                                                                <th className="text-center text-black text-lg" key={i}>{i + 1}</th>
+                                                            ) : null
                                                         ))
                                                     ) : null
                                                 }
@@ -343,7 +349,9 @@ export default function Summary({
                                                 {
                                                     paketSoalMultipleChoice.questions && paketSoalMultipleChoice.questions.length > 0 ? (
                                                         paketSoalMultipleChoice.questions.map((q, i) => (
-                                                            <th className="text-center text-black text-lg" key={i}>{i + 1}</th>
+                                                            multipleChoiceQuestionsId.includes(q.id) ? (
+                                                                <th className="text-center text-black text-lg" key={i}>{i + 1}</th>
+                                                            ) : null
                                                         ))
                                                     ) : null
                                                 }
@@ -461,7 +469,9 @@ export default function Summary({
                                                 {
                                                     paketSoalEssay.questions && paketSoalEssay.questions.length > 0 ? (
                                                         paketSoalEssay.questions.map((q, i) => (
-                                                            <th className="text-center text-black text-lg" key={i}>{i + 1}</th>
+                                                            essayQuestionsId.includes(q.id) ? (
+                                                                <th className="text-center text-black text-lg" key={i}>{i + 1}</th>
+                                                            ) : null
                                                         ))
                                                     ) : null
                                                 }

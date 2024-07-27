@@ -45,7 +45,7 @@ class JawabanMultipleChoiceImport implements ToCollection, WithHeadingRow
                         'u_id' => $u_id,
                         'paket_soal_slug' => $question->paket_soal_slug,
                         'question_slug' => $question->slug,
-                        'answer' => 'Null',
+                        'answer' => strtolower($answer[$key]['jawaban']),
                         'score' => $answer[$key]['poin'],
                     ]);
                 }

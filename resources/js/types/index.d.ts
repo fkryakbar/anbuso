@@ -126,3 +126,13 @@ export interface DayaPembedaEssay {
     value: number,
     question_slug: string
 }
+
+export interface DayaPengecoh {
+    [key: string]: {
+        [key: string]: {
+            value: string;
+            category: string;
+            total: number
+        };
+    };
+}

@@ -43,20 +43,22 @@
     <table width="100%" style="font-size: 10px; ; margin-top: 10px" class="table">
         <thead>
             <tr>
-                <th bgcolor="#93c5fd" colspan='{{ count($paketSoalMultipleChoice->questions) + 3 }}'
+                <th bgcolor="#93c5fd" colspan='{{ count($multipleChoiceQuestionsId) + 3 }}'
                     style="text-align: center;border: 1px solid rgb(133, 133, 133);">Validitas dan Tingkat Kesulitan
                     Butir Soal Pilihan Ganda</th>
             </tr>
             <tr>
                 <th colspan='2'></th>
-                <th colspan='{{ count($paketSoalMultipleChoice->questions) + 1 }}'
+                <th colspan='{{ count($multipleChoiceQuestionsId) + 1 }}'
                     style="text-align: center;border: 1px solid rgb(133, 133, 133);">Butir Soal</th>
             </tr>
             <tr>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">No</th>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">Nama</th>
                 @foreach ($paketSoalMultipleChoice->questions as $key => $q)
-                    <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">{{ $key + 1 }}</th>
+                    @if (in_array($q->id, $multipleChoiceQuestionsId))
+                        <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">{{ $key + 1 }}</th>
+                    @endif
                 @endforeach
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">Total benar</th>
             </tr>
@@ -164,20 +166,22 @@
     <table width="100%" style="font-size: 10px; ; margin-top: 10px" class="table">
         <thead>
             <tr>
-                <th bgcolor="#93c5fd" colspan='{{ count($paketSoalMultipleChoice->questions) + 3 }}'
+                <th bgcolor="#93c5fd" colspan='{{ count($multipleChoiceQuestionsId) + 3 }}'
                     style="text-align: center;border: 1px solid rgb(133, 133, 133);">Daya Pembeda Soal Pilihan Ganda
                 </th>
             </tr>
             <tr>
                 <th colspan='2'></th>
-                <th colspan='{{ count($paketSoalMultipleChoice->questions) + 1 }}'
+                <th colspan='{{ count($multipleChoiceQuestionsId) + 1 }}'
                     style="text-align: center;border: 1px solid rgb(133, 133, 133);">Butir Soal</th>
             </tr>
             <tr>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">No</th>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">Nama</th>
                 @foreach ($paketSoalMultipleChoice->questions as $key => $q)
-                    <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">{{ $key + 1 }}</th>
+                    @if (in_array($q->id, $multipleChoiceQuestionsId))
+                        <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">{{ $key + 1 }}</th>
+                    @endif
                 @endforeach
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">Total benar</th>
             </tr>
@@ -249,24 +253,102 @@
     </table>
 @endif
 
+@if ($dayaPengecohMultipleChoice)
+    <table width="100%" style="font-size: 10px; ; margin-top: 10px" class="table">
+        <thead>
+            <tr>
+                <th bgcolor="#93c5fd" colspan='{{ count($multipleChoiceQuestionsId) + 1 }}'
+                    style="text-align: center;border: 1px solid rgb(133, 133, 133);">Daya Pengecoh Soal Pilihan Ganda
+                </th>
+            </tr>
+            <tr>
+                <th colspan='{{ count($multipleChoiceQuestionsId) + 1 }}'
+                    style="text-align: center;border: 1px solid rgb(133, 133, 133);">Butir Soal</th>
+            </tr>
+            <tr>
+                <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">Opsi Jawaban</th>
+                @foreach ($paketSoalMultipleChoice->questions as $key => $q)
+                    @if (in_array($q->id, $multipleChoiceQuestionsId))
+                        <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">{{ $key + 1 }}</th>
+                    @endif
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">A</td>
+                @foreach ($dayaPengecohMultipleChoice as $question)
+                    <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
+                        <p>{{ $question['a']['value'] }}%</p>
+                        <p>{{ $question['a']['category'] }}</p>
+                        <p>Total Siswa{{ $question['a']['total'] }}</p>
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">B</td>
+                @foreach ($dayaPengecohMultipleChoice as $question)
+                    <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
+                        <p>{{ $question['b']['value'] }}%</p>
+                        <p>{{ $question['b']['category'] }}</p>
+                        <p>Total Siswa{{ $question['b']['total'] }}</p>
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">C</td>
+                @foreach ($dayaPengecohMultipleChoice as $question)
+                    <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
+                        <p>{{ $question['c']['value'] }}%</p>
+                        <p>{{ $question['c']['category'] }}</p>
+                        <p>Total Siswa{{ $question['c']['total'] }}</p>
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">D</td>
+                @foreach ($dayaPengecohMultipleChoice as $question)
+                    <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
+                        <p>{{ $question['d']['value'] }}%</p>
+                        <p>{{ $question['d']['category'] }}</p>
+                        <p>Total Siswa{{ $question['d']['total'] }}</p>
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">E</td>
+                @foreach ($dayaPengecohMultipleChoice as $question)
+                    <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
+                        <p>{{ $question['e']['value'] }}%</p>
+                        <p>{{ $question['e']['category'] }}</p>
+                        <p>Total Siswa {{ $question['e']['total'] }}</p>
+                    </td>
+                @endforeach
+            </tr>
+        </tbody>
+    </table>
+@endif
+
 @if ($validityEssay && $tingkatKesulitanEssay && $dayaPembedaEssay)
     <table width="100%" style="font-size: 10px; ; margin-top: 10px" class="table">
         <thead>
             <tr>
-                <th bgcolor="#a78bfa" colspan='{{ count($paketSoalEssay->questions) + 3 }}'
+                <th bgcolor="#a78bfa" colspan='{{ count($essayQuestionsId) + 3 }}'
                     style="text-align: center;border: 1px solid rgb(133, 133, 133);">Validitas dan Tingkat Kesulitan
                     Butir Soal Essay</th>
             </tr>
             <tr>
                 <th colspan='2'></th>
-                <th colspan='{{ count($paketSoalEssay->questions) + 1 }}'
+                <th colspan='{{ count($essayQuestionsId) + 1 }}'
                     style="text-align: center;border: 1px solid rgb(133, 133, 133);">Butir Soal</th>
             </tr>
             <tr>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">No</th>
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">Nama</th>
                 @foreach ($paketSoalEssay->questions as $key => $q)
-                    <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">{{ $key + 1 }}</th>
+                    @if (in_array($q->id, $essayQuestionsId))
+                        <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">{{ $key + 1 }}</th>
+                    @endif
                 @endforeach
                 <th style="text-align: center;border: 1px solid rgb(133, 133, 133);">Total benar</th>
             </tr>

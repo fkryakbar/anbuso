@@ -92,7 +92,7 @@ class AnalisisController extends Controller
         $reliabilitasMultipleChoice = $this->reliabilitas($filteredStudentsMultipleChoice);
         $tingkatKesulitanMultipleChoice = $this->tingkat_kesukaran($filteredStudentsMultipleChoice);
         $dayaPembedaMultipleChoice = $this->daya_pembeda($filteredStudentsMultipleChoice);
-
+        $dayaPengecohMultipleChoice = $this->daya_pengecoh($filteredStudentsMultipleChoice);
 
 
         $essayQuestionsId = Question::where('paket_soal_slug', $slug)->where('type', 'essay')->get()->pluck('id');
@@ -133,6 +133,7 @@ class AnalisisController extends Controller
             'reliabilitasMultipleChoice',
             'tingkatKesulitanMultipleChoice',
             'dayaPembedaMultipleChoice',
+            'dayaPengecohMultipleChoice',
             'paketSoalEssay',
             'validityEssay',
             'filteredStudentsEssay',
@@ -155,11 +156,25 @@ class AnalisisController extends Controller
         return back();
     }
 
-    public function download($slug)
+    public function download($slug, Request $request)
     {
         PaketSoal::where('user_id', Auth::user()->id)->where('slug', $slug)->firstOrFail();
 
-        return Excel::download(new AnalisisExport($slug), 'Analisis.xlsx');
+        $multipleChoiceQuestionsId = Question::where('paket_soal_slug', $slug)->where('type', 'multiple_choice')->get()->pluck('id');
+        if ($request->multipleChoice) {
+            $multipleChoiceQuestionsId = collect($request->multipleChoice)->map(function ($item) {
+                return (int) $item;
+            });
+        }
+
+        $essayQuestionsId = Question::where('paket_soal_slug', $slug)->where('type', 'essay')->get()->pluck('id');
+        if ($request->essay) {
+            $essayQuestionsId = collect($request->essay)->map(function ($item) {
+                return (int) $item;
+            });
+        }
+
+        return Excel::download(new AnalisisExport($slug, $multipleChoiceQuestionsId, $essayQuestionsId), 'Analisis.xlsx');
     }
 
     public function upload(Request $request)

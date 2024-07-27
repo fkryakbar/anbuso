@@ -1,6 +1,6 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { timeFormat } from "@/helper/helper";
-import { DayaPembeda, DayaPembedaEssay, PaketSoal, Reliability, Student, TingkatKesulitan, Validity } from "@/types";
+import { DayaPembeda, DayaPembedaEssay, DayaPengecoh, PaketSoal, Reliability, Student, TingkatKesulitan, Validity } from "@/types";
 import { Head, Link, router } from "@inertiajs/react";
 import Interpretasi from "./Partials/Interpretasi";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +13,7 @@ export default function Summary({
     reliabilitasMultipleChoice,
     tingkatKesulitanMultipleChoice,
     dayaPembedaMultipleChoice,
+    dayaPengecohMultipleChoice,
     paketSoalEssay,
     validityEssay,
     filteredStudentsEssay,
@@ -27,7 +28,8 @@ export default function Summary({
     filteredStudentsMultipleChoice: Student[],
     reliabilitasMultipleChoice: Reliability | null,
     tingkatKesulitanMultipleChoice: TingkatKesulitan[] | null,
-    dayaPembedaMultipleChoice: DayaPembeda | null
+    dayaPembedaMultipleChoice: DayaPembeda | null,
+    dayaPengecohMultipleChoice: DayaPengecoh | null,
     paketSoalEssay: PaketSoal,
     validityEssay: Validity | null,
     filteredStudentsEssay: Student[],
@@ -40,11 +42,24 @@ export default function Summary({
 }) {
     const divRef = useRef<HTMLDivElement>(null);
     const [divWidth, setDivWidth] = useState(0);
+    const [downloadLink, setDownloadLink] = useState('');
+
 
     useEffect(() => {
         if (divRef.current) {
             setDivWidth(divRef.current.offsetWidth);
         }
+
+        const params = new URLSearchParams();
+        multipleChoiceQuestionsId.forEach(value => params.append('multipleChoice[]', value.toString()));
+        essayQuestionsId.forEach(value => params.append('essay[]', value.toString()));
+
+
+        let url = route('download_analisis', { slug: paketSoalMultipleChoice.slug })
+        if (route().params.multipleChoice && route().params.multipleChoice) {
+            url = route('download_analisis', { slug: paketSoalMultipleChoice.slug }) + '?' + params.toString();
+        }
+        setDownloadLink(url);
 
     }, []);
     return (
@@ -93,7 +108,7 @@ export default function Summary({
                         Analisis
                     </h1>
                     <div>
-                        <a href={route('download_analisis', { slug: paketSoalMultipleChoice.slug })} className="btn btn-sm bg-blue-500 hover:bg-blue-900 text-white">
+                        <a href={downloadLink} className="btn btn-sm bg-blue-500 hover:bg-blue-900 text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                             </svg>
@@ -436,6 +451,170 @@ export default function Summary({
                                 <div className="mt-5">
                                     <img src="/static/question-mark.svg" alt="" className="max-w-[300px] mx-auto" />
                                     <h2 className="text-center font-semibold text-gray-500">Minimal 5 dan Maksimal 30 Siswa yang hanya bisa dilakukan analisis</h2>
+                                </div>
+                            )
+                        }
+                        <div className="flex justify-between">
+                            <h1 className="text-xl font-semibold text-gray-700">Daya Pengecoh</h1>
+                            <button onClick={() => (document.getElementById(
+                                "pengecoh"
+                            ) as HTMLDialogElement
+                            ).showModal()} className="btn btn-sm bg-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                                </svg>
+                            </button>
+                            <Interpretasi id="pengecoh" title="Interpretasi Daya Pengecoh">
+                                <div className="ml-4">
+                                    <h2 className="font-semibold">Pengertian</h2>
+                                    <p className="text-justify indent-10">Dalam pilihan ganda, daya pengecoh merujuk pada seberapa efektif opsi yang salah (disebut pengecoh atau distractor) dapat mengalihkan perhatian peserta dari jawaban yang benar. Berikut adalah penjelasan singkat tentang kategori daya pengecoh :</p>
+                                    <h2 className="font-semibold">Baik</h2>
+                                    <ul className="list-disc ml-5">
+                                        <li>Kejelasan: Pengecoh yang jelas dan masuk akal, sehingga terlihat seperti jawaban yang mungkin benar bagi peserta yang kurang yakin.</li>
+                                        <li>Keselarasan: Pengecoh yang relevan dengan pertanyaan dan konsep yang diuji.</li>
+                                        <li>Kesulitan: Pengecoh yang memiliki tingkat kesulitan yang seimbang dengan jawaban yang benar, membuat peserta yang tidak paham benar-benar harus berpikir keras untuk membedakan.</li>
+                                    </ul>
+                                    <h2 className="font-semibold">Kurang Baik</h2>
+                                    <ul className="list-disc ml-5">
+                                        <li>Sedikit Terlalu Jelas: Pengecoh yang mungkin agak masuk akal tetapi masih mudah untuk disingkirkan oleh peserta yang sedikit memahami materi.</li>
+                                        <li>Relevansi Lemah: Pengecoh yang kurang relevan dengan pertanyaan, sehingga hanya sedikit mengalihkan perhatian peserta.</li>
+                                        <li>Kesulitan Tidak Konsisten: Pengecoh yang terlalu mudah atau terlalu sulit dibandingkan dengan jawaban yang benar, sehingga tidak memberikan tantangan yang seimbang.</li>
+                                    </ul>
+                                    <h2 className="font-semibold">Tidak Baik</h2>
+                                    <ul className="list-disc ml-5">
+                                        <li>Terlalu Jelas Salah: Pengecoh yang sangat mudah dikenali sebagai salah oleh hampir semua peserta, bahkan mereka yang tidak terlalu memahami materi.</li>
+                                        <li>Tidak Relevan: Pengecoh yang tidak ada hubungannya dengan pertanyaan atau materi yang diuji, sehingga tidak memberikan tantangan sama sekali.</li>
+                                        <li>Tingkat Kesulitan Tidak Sesuai: Pengecoh yang jauh lebih mudah atau lebih sulit daripada jawaban yang benar, sehingga tidak efektif dalam menguji pemahaman peserta.</li>
+                                    </ul>
+                                    <p className="text-justify indent-10">Pengecoh yang baik adalah kunci dalam memastikan bahwa tes pilihan ganda benar-benar mengukur pemahaman peserta terhadap materi yang diuji, sementara pengecoh yang kurang baik atau tidak baik dapat merusak validitas tes tersebut.</p>
+
+                                </div>
+
+                            </Interpretasi>
+                        </div>
+                        {
+                            dayaPengecohMultipleChoice ? (<>
+                                <div className="overflow-x-auto">
+                                    <table className="table table-xs border-[1px] min-w-[1000px]">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th className="text-center font-semibold text-black text-lg" colSpan={paketSoalMultipleChoice.questions && paketSoalMultipleChoice.questions.length}>Butir Soal</th>
+                                            </tr>
+                                            <tr>
+                                                <th className="font-semibold text-black text-lg text-center">Opsi Jawaban</th>
+                                                {
+                                                    paketSoalMultipleChoice.questions && paketSoalMultipleChoice.questions.length > 0 ? (
+                                                        paketSoalMultipleChoice.questions.map((q, i) => (
+                                                            multipleChoiceQuestionsId.includes(q.id) ? (
+                                                                <th className="text-center text-black text-lg" key={i}>{i + 1}</th>
+                                                            ) : null
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td className="text-center font-semibold">A</td>
+                                                {
+                                                    Object.keys(dayaPengecohMultipleChoice).map((questionSlug, i) => (
+                                                        <td key={i} className="text-center">
+                                                            <p>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['a']['value']}%
+                                                            </p>
+                                                            <p className={`font-semibold ${dayaPengecohMultipleChoice[questionSlug]['a']['category'] == 'Tidak Baik' ? 'text-red-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['a']['category'] == 'Baik' ? 'text-green-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['a']['category'] == 'Kurang Baik' ? 'text-amber-500' : ''}`}>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['a']['category']}
+                                                            </p>
+                                                            <p>
+                                                                Total Siswa {dayaPengecohMultipleChoice[questionSlug]['a']['total']}
+                                                            </p>
+                                                        </td>
+                                                    ))
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td className="text-center font-semibold">B</td>
+                                                {
+                                                    Object.keys(dayaPengecohMultipleChoice).map((questionSlug, i) => (
+                                                        <td key={i} className="text-center">
+                                                            <p>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['b']['value']}%
+                                                            </p>
+                                                            <p className={`font-semibold ${dayaPengecohMultipleChoice[questionSlug]['b']['category'] == 'Tidak Baik' ? 'text-red-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['b']['category'] == 'Baik' ? 'text-green-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['b']['category'] == 'Kurang Baik' ? 'text-amber-500' : ''}`}>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['b']['category']}
+                                                            </p>
+                                                            <p>
+                                                                Total Siswa {dayaPengecohMultipleChoice[questionSlug]['b']['total']}
+                                                            </p>
+                                                        </td>
+                                                    ))
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td className="text-center font-semibold">C</td>
+                                                {
+                                                    Object.keys(dayaPengecohMultipleChoice).map((questionSlug, i) => (
+                                                        <td key={i} className="text-center">
+                                                            <p>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['c']['value']}%
+                                                            </p>
+                                                            <p className={`font-semibold ${dayaPengecohMultipleChoice[questionSlug]['c']['category'] == 'Tidak Baik' ? 'text-red-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['c']['category'] == 'Baik' ? 'text-green-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['c']['category'] == 'Kurang Baik' ? 'text-amber-500' : ''}`}>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['c']['category']}
+                                                            </p>
+                                                            <p>
+                                                                Total Siswa {dayaPengecohMultipleChoice[questionSlug]['c']['total']}
+                                                            </p>
+                                                        </td>
+                                                    ))
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td className="text-center font-semibold">D</td>
+                                                {
+                                                    Object.keys(dayaPengecohMultipleChoice).map((questionSlug, i) => (
+                                                        <td key={i} className="text-center">
+                                                            <p>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['d']['value']}%
+                                                            </p>
+                                                            <p className={`font-semibold ${dayaPengecohMultipleChoice[questionSlug]['d']['category'] == 'Tidak Baik' ? 'text-red-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['d']['category'] == 'Baik' ? 'text-green-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['d']['category'] == 'Kurang Baik' ? 'text-amber-500' : ''}`}>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['d']['category']}
+                                                            </p>
+                                                            <p>
+                                                                Total Siswa {dayaPengecohMultipleChoice[questionSlug]['d']['total']}
+                                                            </p>
+                                                        </td>
+                                                    ))
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td className="text-center font-semibold">E</td>
+                                                {
+                                                    Object.keys(dayaPengecohMultipleChoice).map((questionSlug, i) => (
+                                                        <td key={i} className="text-center">
+                                                            <p>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['e']['value']}%
+                                                            </p>
+                                                            <p className={`font-semibold ${dayaPengecohMultipleChoice[questionSlug]['e']['category'] == 'Tidak Baik' ? 'text-red-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['e']['category'] == 'Baik' ? 'text-green-500' : ''} ${dayaPengecohMultipleChoice[questionSlug]['e']['category'] == 'Kurang Baik' ? 'text-amber-500' : ''}`}>
+                                                                {dayaPengecohMultipleChoice[questionSlug]['e']['category']}
+                                                            </p>
+                                                            <p>
+                                                                Total Siswa {dayaPengecohMultipleChoice[questionSlug]['e']['total']}
+                                                            </p>
+                                                        </td>
+                                                    ))
+                                                }
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </>) : (
+                                <div className="mt-5">
+                                    <img src="/static/question-mark.svg" alt="" className="max-w-[300px] mx-auto" />
+                                    <h2 className="text-center font-semibold text-gray-500">Minimal ada 5 siswa yang sudah selesai agar bisa dilakukan analisis</h2>
                                 </div>
                             )
                         }

@@ -76,8 +76,6 @@ trait AnalisisButirSoal
         return null;
     }
 
-
-
     private function reliabilitas($students)
     {
         if ($students->count() > 4) {
@@ -290,6 +288,57 @@ trait AnalisisButirSoal
             $dayaPembedaData['dayaPembeda'] = $dayaPembedaByQuestions;
             return $dayaPembedaData;
         }
+        return null;
+    }
+
+    private function daya_pengecoh($students)
+    {
+        if ($students->count()  > 4) {
+            $studentTotal = $students->count();
+            $allAnswers = collect([]);
+
+            $students->each(function ($student) use ($allAnswers) {
+                $allAnswers->push(...$student->answers);
+            });
+            $groupByQuestions = $allAnswers->groupBy('question_slug');
+
+            $countEachAnswer = collect([]);
+            $groupByQuestions->each(function ($question, $key) use ($countEachAnswer) {
+                $countEachAnswer->put($key, $question->countBy('answer'));
+            });
+
+            $allkeys = ['a', 'b', 'c', 'd', 'e'];
+            $mergedQuestions = [];
+
+            foreach ($countEachAnswer as $key => $collection) {
+                $completeCollection = collect(array_fill_keys($allkeys, 0));
+                $completeCollection = $completeCollection->merge($collection);
+                $mergedQuestions[$key] = $completeCollection;
+            }
+            $mergedQuestions = collect($mergedQuestions);
+            $mergedQuestions = $mergedQuestions->map(function ($question) use ($studentTotal) {
+                return $question->map(function ($total, $key) use ($studentTotal) {
+
+                    $value = ($total / $studentTotal) * 100;
+
+                    $category = "Tidak Baik";
+                    if ($value >= 5) {
+                        $category = "Baik";
+                    } else if ($value > 0 && $value < 5) {
+                        $category = "Kurang Baik";
+                    }
+                    $value = number_format(($total / $studentTotal) * 100, 2);
+                    return [
+                        'value' => $value,
+                        'category' => $category,
+                        'total' => $total
+                    ];
+                });
+            });
+
+            return $mergedQuestions;
+        }
+
         return null;
     }
 

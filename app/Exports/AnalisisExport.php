@@ -18,9 +18,14 @@ class AnalisisExport implements FromView, ShouldAutoSize
      * @return \Illuminate\Support\Collection
      */
     private $slug;
-    public function __construct($slug)
+    private $multipleChoiceQuestionsId;
+    private $essayQuestionsId;
+
+    public function __construct($slug, $multipleChoiceQuestionsId, $essayQuestionsId)
     {
         $this->slug = $slug;
+        $this->multipleChoiceQuestionsId = $multipleChoiceQuestionsId;
+        $this->essayQuestionsId = $essayQuestionsId;
     }
 
     public function view(): View
@@ -34,13 +39,13 @@ class AnalisisExport implements FromView, ShouldAutoSize
 
 
         $studentsMultipleChoice = Student::where('paket_soal_slug', $this->slug)->with(['answers' => function ($query) {
-            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'multiple_choice')
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'multiple_choice')->whereIn('questions.id', $this->multipleChoiceQuestionsId)
                 ->orderBy('questions.id', 'ASC')
                 ->select('answers.*');
         }])->get();
         $filteredStudentsMultipleChoice = [];
         foreach ($studentsMultipleChoice as $key => $student) {
-            if ($student->answers->count() == $paketSoalMultipleChoice->questions->count()) {
+            if ($student->answers->count() == $paketSoalMultipleChoice->questions->count() || $student->answers->count() == $this->multipleChoiceQuestionsId->count()) {
                 array_push($filteredStudentsMultipleChoice, $student);
             }
         }
@@ -50,16 +55,16 @@ class AnalisisExport implements FromView, ShouldAutoSize
         $reliabilitasMultipleChoice = $this->reliabilitas($filteredStudentsMultipleChoice);
         $tingkatKesulitanMultipleChoice = $this->tingkat_kesukaran($filteredStudentsMultipleChoice);
         $dayaPembedaMultipleChoice = $this->daya_pembeda($filteredStudentsMultipleChoice);
-
+        $dayaPengecohMultipleChoice = $this->daya_pengecoh($filteredStudentsMultipleChoice);
 
         $studentsEssay = Student::where('paket_soal_slug', $this->slug)->with(['answers' => function ($query) {
-            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'essay')
+            $query->join('questions', 'answers.question_slug', '=', 'questions.slug')->where('questions.type', 'essay')->whereIn('questions.id', $this->essayQuestionsId)
                 ->orderBy('questions.id', 'ASC')
                 ->select('answers.*');
         }])->get();
         $filteredStudentsEssay = [];
         foreach ($studentsEssay as $key => $student) {
-            if ($student->answers->count() == $paketSoalEssay->questions->count()) {
+            if ($student->answers->count() == $paketSoalEssay->questions->count() || $student->answers->count() == $this->essayQuestionsId->count()) {
                 array_push($filteredStudentsEssay, $student);
             }
         }
@@ -69,8 +74,9 @@ class AnalisisExport implements FromView, ShouldAutoSize
         $reliabilitasEssay = $this->reliabilitas($filteredStudentsEssay);
         $tingkatKesulitanEssay = $this->tingkat_kesukaran($filteredStudentsEssay);
         $dayaPembedaEssay = $this->daya_pembeda_essay($filteredStudentsEssay);
-        // dd($dayaPembeda);
 
+        $multipleChoiceQuestionsId = $this->multipleChoiceQuestionsId->toArray();
+        $essayQuestionsId = $this->essayQuestionsId->toArray();
         return view('template.analisis_export', compact(
             'paketSoalMultipleChoice',
             'validityMultipleChoice',
@@ -78,12 +84,15 @@ class AnalisisExport implements FromView, ShouldAutoSize
             'reliabilitasMultipleChoice',
             'tingkatKesulitanMultipleChoice',
             'dayaPembedaMultipleChoice',
+            'dayaPengecohMultipleChoice',
             'paketSoalEssay',
             'validityEssay',
             'filteredStudentsEssay',
             'reliabilitasEssay',
             'tingkatKesulitanEssay',
-            'dayaPembedaEssay'
+            'dayaPembedaEssay',
+            'multipleChoiceQuestionsId',
+            'essayQuestionsId'
         ));
     }
 }

@@ -9,9 +9,14 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\SkipsErrors;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class JawabanMultipleChoiceImport implements ToCollection, WithHeadingRow
+class JawabanMultipleChoiceImport implements ToCollection, WithHeadingRow, WithValidation
 {
+
+    use SkipsErrors;
+
     private $paket_soal_slug;
     public function __construct($paket_soal_slug)
     {
@@ -51,5 +56,14 @@ class JawabanMultipleChoiceImport implements ToCollection, WithHeadingRow
                 }
             });
         });
+    }
+    public function rules(): array
+    {
+        return [
+            '*.no_soal' => 'required',
+            '*.siswa'  => 'required',
+            '*.jawaban'  => 'required',
+            '*.poin'  => 'required|numeric',
+        ];
     }
 }

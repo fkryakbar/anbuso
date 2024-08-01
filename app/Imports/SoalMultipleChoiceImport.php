@@ -9,9 +9,15 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\SkipsErrors;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Validators\Failure;
 
-class SoalMultipleChoiceImport implements ToModel, WithHeadingRow
+class SoalMultipleChoiceImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure
 {
+    use SkipsErrors;
+    protected $failures = [];
     private $paket_soal_slug;
     public function __construct($paket_soal_slug)
     {
@@ -28,14 +34,31 @@ class SoalMultipleChoiceImport implements ToModel, WithHeadingRow
                 'content' => $row['konten'],
                 'type' => 'multiple_choice',
                 'format' => [
-                    'option_a' => $row['a'],
-                    'option_b' => $row['b'],
-                    'option_c' => $row['c'],
-                    'option_d' => $row['d'],
-                    'option_e' => $row['e'],
+                    'option_a' => (string) $row['a'],
+                    'option_b' => (string) $row['b'],
+                    'option_c' => (string) $row['c'],
+                    'option_d' => (string) $row['d'],
+                    'option_e' => (string) $row['e'],
                     'answer_key' => in_array(strtolower($row['kunci_jawaban']), ['a', 'b', 'c', 'd', 'e']) ? strtolower($row['kunci_jawaban']) : 'a',
                 ]
             ]);
         }
+    }
+    public function onFailure(Failure ...$failures)
+    {
+        $this->failures = array_merge($this->failures, $failures);
+    }
+    public function rules(): array
+    {
+        return [
+            '*.no' => 'required',
+            '*.konten'  => 'required',
+            '*.a'  => 'nullable',
+            '*.b'  => 'nullable',
+            '*.c'  => 'nullable',
+            '*.d'  => 'nullable',
+            '*.e'  => 'nullable',
+            '*.kunci_jawaban'  => 'required',
+        ];
     }
 }

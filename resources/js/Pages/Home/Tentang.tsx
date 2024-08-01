@@ -41,6 +41,19 @@ export default function Tentang({ auth, laravelVersion, phpVersion }: PageProps<
                                 <li className='text-black'>Rezqy Hidayat</li>
                                 <li className='text-black'>Devia Handayani</li>
                             </ol>
+                            <div className='mt-10 text-xs'>
+                                <p className='text-slate-600'>
+                                    Sumber Asset :
+                                </p>
+                                <ol className='list-disc ml-10'>
+                                    <li>
+                                        <a target='_blank' className='link text-blue-500 hover:text-blue-700' href="https://freepik.com">Freepik</a>
+                                    </li>
+                                    <li>
+                                        <a target='_blank' className='link text-blue-500 hover:text-blue-700' href="https://storyset.com">Storyset</a>
+                                    </li>
+                                </ol>
+                            </div>
                         </div>
                         <div className='basis-[40%]'>
                             <img src="/static/about.svg" alt="about" className='w-full' />

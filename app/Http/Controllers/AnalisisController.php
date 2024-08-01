@@ -235,7 +235,7 @@ class AnalisisController extends Controller
                 ]
             ]);
         }
-
-        Excel::import(new JawabanImport($paketSoalSlug), $request->file('file'));
+        $import = new JawabanImport($paketSoalSlug);
+        Excel::import($import, $request->file('file'));
     }
 }

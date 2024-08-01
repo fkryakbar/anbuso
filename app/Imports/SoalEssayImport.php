@@ -9,10 +9,15 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\SkipsErrors;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Validators\Failure;
 
-
-class SoalEssayImport implements ToModel, WithHeadingRow
+class SoalEssayImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure
 {
+    use SkipsErrors;
+    protected $failures = [];
     private $paket_soal_slug;
     public function __construct($paket_soal_slug)
     {
@@ -33,5 +38,17 @@ class SoalEssayImport implements ToModel, WithHeadingRow
                 ]
             ]);
         }
+    }
+    public function onFailure(Failure ...$failures)
+    {
+        $this->failures = array_merge($this->failures, $failures);
+    }
+    public function rules(): array
+    {
+        return [
+            '*.no' => 'required',
+            '*.konten'  => 'required',
+            '*.bobot'  => 'required',
+        ];
     }
 }

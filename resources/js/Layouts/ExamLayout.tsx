@@ -18,10 +18,10 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
     useEffect(() => {
-        (document.getElementById('help') as HTMLDialogElement).showModal();
-        (document.getElementById('help') as HTMLDialogElement).addEventListener('show', function () {
-            (document.getElementById('hidden-focus') as HTMLInputElement).focus();
-        });
+        // (document.getElementById('help') as HTMLDialogElement).showModal();
+        // (document.getElementById('help') as HTMLDialogElement).addEventListener('show', function () {
+        //     (document.getElementById('hidden-focus') as HTMLInputElement).focus();
+        // });
 
 
 
@@ -48,7 +48,7 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                         <div className="text-center text-gray-600">
                             <p className="text-xs">Nomor Soal</p>
                             <h1 className="font-bold text-sm">
-                                {questionIndex + 1}
+                                {questionIndex}
                             </h1>
                         </div>
                     </div>
@@ -147,7 +147,7 @@ function ExamSideBar({ changeQuestion, student, paketSoal, questionTotal, questi
     if (questionTotal && questions) {
         for (let i = 0; i < questionTotal; i++) {
             buttonIndex.push(
-                <button key={i} onClick={e => changeQuestion(i)} type="button" className={`p-2 rounded border-[1px] hover:bg-amber-500 hover:text-white font-semibold text-gray-600 transition-all ${questionIndex == i ? 'bg-amber-500 text-white' : ''} ${questions[i].answer ? 'bg-blue-500 text-white' : ''}`}>
+                <button key={i} onClick={e => changeQuestion(i)} type="button" className={`p-2 rounded border-[1px] hover:bg-amber-500 hover:text-white font-semibold text-gray-600 transition-all ${questionIndex - 1 == i ? 'bg-amber-500 text-white' : ''} ${questions[i].answer ? 'bg-blue-500 text-white' : ''}`}>
                     {i + 1}
                 </button>
             );

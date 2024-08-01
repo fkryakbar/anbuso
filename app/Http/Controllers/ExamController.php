@@ -22,6 +22,16 @@ class ExamController extends Controller
         $paketSoal = PaketSoal::where('slug', $slug)->with('questions')->firstOrFail();
 
         if (session()->has('student') && $paketSoal->accept_responses == 1 && Student::where('u_id', session('student')['u_id'])->first()) {
+            // $u_id = session('student')['u_id'];
+            // $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
+            //     $query->with(['answer' => function ($query) use ($u_id) {
+            //         $query->where('u_id', $u_id);
+            //     }]);
+            // }])->firstOrFail();
+
+            // return Inertia::render('Exam/Exam', compact('paketSoal'));
+
+
             $u_id = session('student')['u_id'];
             $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
                 $query->with(['answer' => function ($query) use ($u_id) {
@@ -29,7 +39,11 @@ class ExamController extends Controller
                 }]);
             }])->firstOrFail();
 
-            return Inertia::render('Exam/Exam', compact('paketSoal'));
+
+            $question = $paketSoal->questions()->with(['answer' => function ($query) use ($u_id) {
+                $query->where('u_id', $u_id);
+            }])->paginate(1);
+            return Inertia::render('Exam/Exam2', compact('paketSoal', 'question'));
         }
 
 

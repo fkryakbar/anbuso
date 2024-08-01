@@ -7,7 +7,7 @@ import { useDebounce } from "@/helper/helper"
 import axios from "axios"
 import Swal from "sweetalert2"
 import { Head, router } from "@inertiajs/react"
-const RichEditor = ({ question, questions, setQuestions }: { question: Question, questions: Question[], setQuestions: (value: Question[]) => void }) => {
+const RichEditor = ({ question, questions, setQuestions, setIsSaving }: { question: Question, questions: Question[], setIsSaving: (state: boolean) => void, setQuestions: (value: Question[]) => void }) => {
 
     const [quill, setQuill] = useState<any>(null)
     const [editor, setEditor] = useState<any>(null)
@@ -20,6 +20,7 @@ const RichEditor = ({ question, questions, setQuestions }: { question: Question,
         }
     }, [debouncedText]);
     const saveAnswerEssay = (userAnswer: string, question_slug: string) => {
+        setIsSaving(true)
         const payload = {
             question_slug: question_slug,
             answer: userAnswer,
@@ -41,7 +42,7 @@ const RichEditor = ({ question, questions, setQuestions }: { question: Question,
 
 
                 }
-
+                setIsSaving(false)
             })
             .catch(err => {
                 if (err.response.status == 403) {
@@ -61,7 +62,7 @@ const RichEditor = ({ question, questions, setQuestions }: { question: Question,
                     icon: "error"
                 });
                 console.log(err);
-
+                setIsSaving(false)
             })
     }
     const wrapperRef = useCallback((wrapper: any) => {

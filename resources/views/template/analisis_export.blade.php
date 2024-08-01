@@ -281,7 +281,7 @@
                     <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                         <p>{{ $question['a']['value'] }}%</p>
                         <p>{{ $question['a']['category'] }}</p>
-                        <p>Total Siswa{{ $question['a']['total'] }}</p>
+                        <p>Total Siswa {{ $question['a']['total'] }}</p>
                     </td>
                 @endforeach
             </tr>
@@ -291,7 +291,7 @@
                     <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                         <p>{{ $question['b']['value'] }}%</p>
                         <p>{{ $question['b']['category'] }}</p>
-                        <p>Total Siswa{{ $question['b']['total'] }}</p>
+                        <p>Total Siswa {{ $question['b']['total'] }}</p>
                     </td>
                 @endforeach
             </tr>
@@ -301,7 +301,7 @@
                     <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                         <p>{{ $question['c']['value'] }}%</p>
                         <p>{{ $question['c']['category'] }}</p>
-                        <p>Total Siswa{{ $question['c']['total'] }}</p>
+                        <p>Total Siswa {{ $question['c']['total'] }}</p>
                     </td>
                 @endforeach
             </tr>
@@ -311,7 +311,7 @@
                     <td style="text-align: center;border: 1px solid rgb(133, 133, 133);">
                         <p>{{ $question['d']['value'] }}%</p>
                         <p>{{ $question['d']['category'] }}</p>
-                        <p>Total Siswa{{ $question['d']['total'] }}</p>
+                        <p>Total Siswa {{ $question['d']['total'] }}</p>
                     </td>
                 @endforeach
             </tr>

@@ -1,5 +1,5 @@
 import ExamLayout from "@/Layouts/ExamLayout";
-import { Answer, PaketSoal, Question, Student } from "@/types";
+import { Answer, PaginatedQuestions, PaketSoal, Question, Student } from "@/types";
 import { Head, router, useRemember } from "@inertiajs/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -8,31 +8,28 @@ import 'katex/dist/katex.min.css';
 import Swal from "sweetalert2";
 import RichEditor from "./Partials/RichEditor";
 
-export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, student: { session: Student } }) {
-    const [questions, setQuestions] = useState(paketSoal.questions);
-    const questionTotal = questions?.length
+export default function Exam({ paketSoal, student, question }: { paketSoal: PaketSoal, student: { session: Student }, question: PaginatedQuestions }) {
+    const [questions, setQuestions] = useState(question.data);
+    const questionTotal = paketSoal.questions?.length;
     const [isSaving, setIsSaving] = useState(false);
-    // const [currentQuestion, setCurrentQuestion] = useState(questions?.[0]);
-    const [rememberedState, setRememberedState] = useRemember({
-        questionIndex: 0
-    });
-    const [questionIndex, setQuestionIndex] = useState(rememberedState.questionIndex);
 
     const nextQuestion = () => {
-        setQuestionIndex(currentIndex => {
-            if (currentIndex + 1 == questionTotal) {
 
-                const notAnsweredQuestion = questions?.filter(q => q.answer == null) as Question[];
+        if (question.next_page_url) {
+            router.visit(question.next_page_url);
+        } else {
+            let questionTotal = paketSoal.questions?.length ? paketSoal.questions?.length : 0;
 
-                if (notAnsweredQuestion.length > 0) {
-                    Swal.fire({
-                        title: "Belum Selesai",
-                        text: "Masih ada soal yang belum terjawab.",
-                        icon: "warning"
-                    });
+            const notAnsweredQuestion = paketSoal.questions?.filter((q, i) => q.answer == null && i != questionTotal - 1) as Question[];
+            let lastQuestionIsAnwered = questions[0].answer ? true : false;
 
-                    return currentIndex
-                }
+            if (notAnsweredQuestion.length > 0) {
+                Swal.fire({
+                    title: "Belum Selesai",
+                    text: "Masih ada soal yang belum terjawab.",
+                    icon: "warning"
+                });
+            } else if (lastQuestionIsAnwered) {
                 Swal.fire({
                     title: "Yakin Sudah Selesai?",
                     text: "Setelah selesai jawaban tidak bisa dirubah",
@@ -45,36 +42,28 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                         router.get(route('finished-exam', { slug: paketSoal.slug }))
                     }
                 })
-
-
-                return currentIndex
+            } else {
+                Swal.fire({
+                    title: "Belum Selesai",
+                    text: "Masih ada soal yang belum terjawab.",
+                    icon: "warning"
+                });
             }
-            const newIndex = currentIndex + 1;
-            setRememberedState({
-                questionIndex: newIndex
-            })
-            return newIndex;
-        })
+
+        }
     }
     const prevQuestion = () => {
-        setQuestionIndex(currentIndex => {
-            if (currentIndex == 0) return currentIndex
-            const newIndex = currentIndex - 1;
-            setRememberedState({
-                questionIndex: newIndex
-            })
-            return newIndex;
-        })
+        if (question.prev_page_url) {
+            router.visit(question.prev_page_url)
+        }
     }
     const changeQuestion = (index: number) => {
-        setQuestionIndex(index)
-        setRememberedState({
-            questionIndex: index
-        })
+        router.visit(route('exam', { slug: paketSoal.slug, page: index + 1 }))
     }
 
 
     const saveAnswerMultipleChoice = (userAnswer: string, key: string, question_slug: string) => {
+        setIsSaving(true)
         const payload = {
             question_slug: question_slug,
             answer: userAnswer,
@@ -98,7 +87,7 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
 
                     setQuestions(newQuestionsData);
 
-
+                    setIsSaving(false)
                 }
 
             })
@@ -120,17 +109,17 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                     icon: "error"
                 });
                 console.log(err);
-
+                setIsSaving(false)
             })
     }
 
     return (
-        <ExamLayout changeQuestion={changeQuestion} paketSoal={paketSoal} questions={questions} nextQuestion={nextQuestion} prevQuestion={prevQuestion} questionIndex={questionIndex} questionTotal={questionTotal} student={student.session}>
+        <ExamLayout changeQuestion={changeQuestion} paketSoal={paketSoal} questions={paketSoal.questions} nextQuestion={nextQuestion} prevQuestion={prevQuestion} questionIndex={question.current_page} questionTotal={questionTotal} student={student.session}>
             <Head title={`${paketSoal.title} | Exam Mode`} ></Head>
             {
                 questions && questions.length > 0 ? (questions.map((q, index) => (
 
-                    <div key={index} className={`mb-[100px] max-w-[500px] mx-auto ${questionIndex == index ? '' : 'hidden'}`}>
+                    <div key={index} className={`mb-[100px] max-w-[500px] mx-auto`}>
                         {/* <div className="mt-5" dangerouslySetInnerHTML={{ __html: q.content }}></div> */}
                         <div className="mt-5">
                             <Latex>{q.content}</Latex>
@@ -194,10 +183,25 @@ export default function Exam({ paketSoal, student }: { paketSoal: PaketSoal, stu
                                         ) : null
                                     }
                                 </>) : (<>
-                                    <RichEditor question={q} questions={questions} setQuestions={setQuestions} setIsSaving={setIsSaving} />
+                                    <RichEditor setIsSaving={setIsSaving} question={q} questions={questions} setQuestions={setQuestions} />
                                 </>)
                             }
                         </div>
+                        <p className="text-end text-slate-500 italic text-xs mt-2">
+                            {
+                                q.answer && isSaving == false ? (
+                                    <>
+                                        Answer Saved
+                                    </>
+                                ) : (
+                                    isSaving ? (
+                                        <>Saving Answer...</>
+                                    ) : (<>
+
+                                    </>)
+                                )
+                            }
+                        </p>
                     </div>
                 ))) : null
             }

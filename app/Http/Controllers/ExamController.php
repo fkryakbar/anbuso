@@ -44,18 +44,18 @@ class ExamController extends Controller
 
 
             $u_id = session('student')['u_id'];
-            $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
+            $dataSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
                 $query->with(['answer' => function ($query) use ($u_id) {
                     $query->where('u_id', $u_id);
                 }]);
             }])->firstOrFail();
 
 
-            $question = $paketSoal->questions()->with(['answer' => function ($query) use ($u_id) {
+            $question = $dataSoal->questions()->with(['answer' => function ($query) use ($u_id) {
                 $query->where('u_id', $u_id);
             }])->paginate(1);
 
-            $paketSoal = collect($paketSoal);
+            $paketSoal = collect($dataSoal);
             $paketSoal['questions'] = array_map(function ($question) {
                 return ['answer' => $question['answer']];
             }, $paketSoal['questions']);

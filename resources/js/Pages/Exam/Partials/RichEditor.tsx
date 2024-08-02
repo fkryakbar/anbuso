@@ -12,7 +12,7 @@ const RichEditor = ({ question, questions, setQuestions, setIsSaving }: { questi
     const [quill, setQuill] = useState<any>(null)
     const [editor, setEditor] = useState<any>(null)
     const [answer, setAnswer] = useState('');
-    const debouncedText = useDebounce(answer, 1000); // 500ms delay
+    const debouncedText = useDebounce(answer, 500); // 500ms delay
 
     useEffect(() => {
         if (debouncedText) {

@@ -17,19 +17,30 @@ class ExamController extends Controller
 
     private $usePusher = false;
 
+
     public function index($slug)
     {
         $paketSoal = PaketSoal::where('slug', $slug)->with('questions')->firstOrFail();
 
         if (session()->has('student') && $paketSoal->accept_responses == 1 && Student::where('u_id', session('student')['u_id'])->first()) {
-            // $u_id = session('student')['u_id'];
-            // $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
-            //     $query->with(['answer' => function ($query) use ($u_id) {
-            //         $query->where('u_id', $u_id);
-            //     }]);
-            // }])->firstOrFail();
+            $u_id = session('student')['u_id'];
+            $paketSoal = PaketSoal::where('slug', $slug)->with(['questions' => function ($query) use ($u_id) {
+                $query->with(['answer' => function ($query) use ($u_id) {
+                    $query->where('u_id', $u_id);
+                }]);
+            }])->firstOrFail();
 
-            // return Inertia::render('Exam/Exam', compact('paketSoal'));
+            return Inertia::render('Exam/Exam', compact('paketSoal'));
+        }
+
+
+        return Inertia::render('Exam/Index', compact('paketSoal'));
+    }
+    public function index2($slug)
+    {
+        $paketSoal = PaketSoal::where('slug', $slug)->with('questions')->firstOrFail();
+
+        if (session()->has('student') && $paketSoal->accept_responses == 1 && Student::where('u_id', session('student')['u_id'])->first()) {
 
 
             $u_id = session('student')['u_id'];
@@ -43,13 +54,18 @@ class ExamController extends Controller
             $question = $paketSoal->questions()->with(['answer' => function ($query) use ($u_id) {
                 $query->where('u_id', $u_id);
             }])->paginate(1);
+
+            $paketSoal = collect($paketSoal);
+            $paketSoal['questions'] = array_map(function ($question) {
+                return ['answer' => $question['answer']];
+            }, $paketSoal['questions']);
+
             return Inertia::render('Exam/Exam2', compact('paketSoal', 'question'));
         }
 
 
         return Inertia::render('Exam/Index', compact('paketSoal'));
     }
-
 
     public function student_register($slug, Request $request)
     {

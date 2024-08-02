@@ -16,12 +16,11 @@ export default function Finish({ student, paketSoal }: { student: Student, paket
                             paketSoal.show_correct_answer ? (
                                 <>
                                     <h2 className="card-title">Skor kamu</h2>
-                                    <div className="radial-progress text-green-400" style={{ '--value': student.result?.score } as React.CSSProperties}>{student.result?.score}</div>
-                                    <p>Soal Benar : {student.result?.trueAnswers} dari {student.result?.questionTotal} Soal</p>
+                                    <div className="radial-progress text-green-400" style={{ '--value': 100 } as React.CSSProperties}>{student.result?.score}</div>
                                 </>
                             ) : null
                         }
-                        <div className="flex gap-2 flex-wrap justify-center">
+                        <div className="flex gap-2 flex-wrap justify-center mt-2">
                             <div className="card-actions">
                                 <Link href="/" className="btn btn-sm bg-green-400 border-none hover:bg-green-600 text-white">
                                     Keluar

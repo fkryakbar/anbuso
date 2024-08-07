@@ -1,6 +1,6 @@
 import { PaketSoal, Question, Student } from "@/types";
-import { Link } from "@inertiajs/react";
-import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+import { Link, router } from "@inertiajs/react";
+import { PropsWithChildren, ReactNode, useEffect, useRef, useState } from "react";
 
 interface ExamLayout {
     children: ReactNode | undefined,
@@ -16,14 +16,27 @@ interface ExamLayout {
 
 export default function GuestExamLayout({ children, paketSoal, nextQuestion, prevQuestion, questionIndex, questionTotal, student, changeQuestion, questions }: ExamLayout) {
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+    const divRef = useRef<HTMLDivElement>(null);
+    const [divWidth, setDivWidth] = useState(0);
+
 
     useEffect(() => {
-        // (document.getElementById('help') as HTMLDialogElement).showModal();
-        // (document.getElementById('help') as HTMLDialogElement).addEventListener('show', function () {
-        //     (document.getElementById('hidden-focus') as HTMLInputElement).focus();
-        // });
 
+        const rememberedState = sessionStorage.getItem('helpDialogState');
 
+        if (rememberedState && rememberedState == paketSoal.slug) {
+
+        } else {
+            (document.getElementById('help') as HTMLDialogElement).showModal();
+            (document.getElementById('help') as HTMLDialogElement).addEventListener('show', function () {
+                (document.getElementById('hidden-focus') as HTMLInputElement).focus();
+            });
+            sessionStorage.setItem('helpDialogState', paketSoal.slug);
+        }
+
+        if (divRef.current) {
+            setDivWidth(divRef.current.offsetWidth);
+        }
 
     }, [])
 
@@ -121,8 +134,8 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                 </aside>
                 <div onClick={e => setIsSideBarOpen(false)} className={`fixed inset-0 z-10 items-end bg-black bg-opacity-50 sm:items-center sm:justify-center ${isSideBarOpen ? 'flex' : 'hidden'} min-h-screen`}></div>
                 <div className='lg:basis-[85%] w-full relative'>
-                    <main className='p-5'>{children}</main>
-                    <div className="flex gap-2 fixed bottom-0 w-full bg-white p-3 lg:justify-start justify-center">
+                    <main ref={divRef} className='p-5'>{children}</main>
+                    <div className="flex gap-2 fixed bottom-0 w-full bg-white p-3 justify-center" style={{ width: divWidth }}>
                         <button type="button" onClick={prevQuestion} className="btn bg-blue-400 hover:bg-blue-800 text-white text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
@@ -130,7 +143,13 @@ export default function GuestExamLayout({ children, paketSoal, nextQuestion, pre
                             Sebelumnya
                         </button>
                         <button type="button" onClick={nextQuestion} className="btn bg-blue-400 hover:bg-blue-800 text-white text-sm">
-                            Selanjutnya
+                            {
+                                questionIndex == questionTotal ? (
+                                    <>Selesai</>
+                                ) : (
+                                    <>Selanjutnya</>
+                                )
+                            }
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                             </svg>

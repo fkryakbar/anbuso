@@ -39,6 +39,7 @@ export default function Exam({ paketSoal, student, question }: { paketSoal: Pake
                     cancelButtonText: "Batal",
                 }).then(result => {
                     if (result.isConfirmed) {
+                        sessionStorage.removeItem('helpDialogState');
                         router.get(route('finished-exam', { slug: paketSoal.slug }))
                     }
                 })
